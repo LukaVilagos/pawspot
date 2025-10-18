@@ -8,13 +8,20 @@
     "start:api": "pnpm --filter pawspot-api start:dev",
     "start": "pnpm run start:web & pnpm run start:api",
     "build": "pnpm recursive run build",
-    "test": "pnpm recursive run test"
+    "test": "pnpm recursive run test",
+    "db:up": "docker-compose up -d postgres",
+    "db:down": "docker-compose down",
+    "db:logs": "docker-compose logs -f postgres",
+    "db:migrate": "pnpm --filter @pawspot/db prisma:migrate dev",
+    "db:studio": "pnpm --filter @pawspot/db prisma:studio",
+    "db:generate": "pnpm --filter @pawspot/db prisma:generate",
+    "db:reset": "pnpm --filter @pawspot/db prisma:migrate reset"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "packageManager": "pnpm@10.18.3",
   "dependencies": {
-    "@pawspot/logger": "link:packages\\logger"
+    "tailwindcss": "^4.1.14"
   }
 }

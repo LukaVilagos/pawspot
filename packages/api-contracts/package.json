@@ -1,7 +1,7 @@
 {
-  "name": "@pawspot/logger",
+  "name": "@pawspot/api-contracts",
   "version": "1.0.0",
-  "description": "Shared logging utilities for pawspot monorepo",
+  "description": "Shared API contracts, routes and DTOs for pawspot monorepo",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
   "types": "dist/types/index.d.ts",
