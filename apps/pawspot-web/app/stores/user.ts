@@ -1,13 +1,14 @@
-import type { UsersListResponseDto } from "@pawspot/api-contracts";
+import type { UserResponseDto, UsersListResponseDto } from "@pawspot/api-contracts";
 import { useUserApi } from "~/composables/useUserApi";
 
 export const useUserStore = defineStore('user', () => {
     const users = ref<UsersListResponseDto>([]);
+    const user = ref<UserResponseDto | null>(null);
     const userCount = computed(() => users.value.length);
     const loading = ref(true);
     const error = ref<string | null>(null);
 
-    const { getAllUsers } = useUserApi();
+    const { getAllUsers, getUserById } = useUserApi();
 
     const fetchUsers = async () => {
         loading.value = true;
@@ -24,11 +25,28 @@ export const useUserStore = defineStore('user', () => {
         }
     };
 
+    const fetchUserById = async (id: string) => {
+        loading.value = true;
+        error.value = null;
+
+        try {
+            const data = await getUserById(id);
+            user.value = data || null;
+        } catch (e) {
+            error.value = 'Failed to fetch user';
+            console.error(e);
+        } finally {
+            loading.value = false;
+        }
+    };
+
     return {
         users,
         userCount,
         loading,
         error,
+        user,
         fetchUsers,
+        fetchUserById,
     };
 });

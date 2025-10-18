@@ -19,7 +19,7 @@
                     <div class="font-semibold">{{ user.name || 'No name' }}</div>
                     <div class="text-sm text-gray-600">{{ user.email }}</div>
                     <div class="text-xs text-gray-400">ID: {{ user.id }}</div>
-                    
+                    <div><NuxtLink :to="`/users/${user.id}`">View Profile</NuxtLink></div>
                 </li>
             </ul>
             
@@ -29,12 +29,6 @@
         </div>
 </template>
 <script setup lang="ts">
-import { useUserStore } from '~/stores/user';
-
 const userStore = useUserStore();
-
-onMounted(async () => {
-    await userStore.fetchUsers();
-});
-
+await callOnce('users', () => userStore.fetchUsers(), { mode: 'navigation' });
 </script>
