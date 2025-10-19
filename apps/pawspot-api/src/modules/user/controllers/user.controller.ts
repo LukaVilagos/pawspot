@@ -1,6 +1,6 @@
 import { Controller, Get, Param } from '@nestjs/common';
 import { USER_ROUTES, UserResponseDto, UsersListResponseDto } from '@pawspot/api-contracts';
-import { UserService } from 'src/user/services/user.service';
+import { UserService } from '../services/user.service';
 
 @Controller(USER_ROUTES.ROOT)
 export class UserController {
@@ -12,7 +12,7 @@ export class UserController {
     }
 
     @Get(USER_ROUTES.BY_ID)
-    async getUserById(@Param('id') id: string): Promise<UserResponseDto | null> {
+    async getUserById(@Param('id') id: string): Promise<UserResponseDto> {
         return this.userService.getUserById(id);
     }
 }

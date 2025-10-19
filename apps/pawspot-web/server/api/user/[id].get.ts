@@ -1,6 +1,6 @@
-import { UserContract, UserResponseDto } from "@pawspot/api-contracts"
+import { UserContract, UserResponse } from "@pawspot/api-contracts"
 
-export default defineEventHandler(async (event): Promise<UserResponseDto | null> => {
+export default defineEventHandler(async (event): Promise<UserResponse> => {
     const id = event.context.params?.id;
 
     if (!id) {
