@@ -23,5 +23,13 @@
   "packageManager": "pnpm@10.18.3",
   "dependencies": {
     "tailwindcss": "^4.1.14"
+  },
+  "pnpm": {
+    "overrides": {
+      "class-transformer": "0.4.1"
+    },
+    "ignoredBuiltDependencies": [
+      "@nestjs/core"
+    ]
   }
 }

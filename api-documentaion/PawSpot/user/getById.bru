@@ -1,0 +1,20 @@
+meta {
+  name: getById
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{apiUrl}}/user/{{userId}}
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImpvaG4uZG9lKzFAZXhhbXBsZS5jb20iLCJpZCI6ImNtZ3k2Z3NkbjAwMDBic2s0OWd5cmtkcW4iLCJpYXQiOjE3NjA5MDcxNjksImV4cCI6MTc2MDkxMDc2OX0._Y0WotbIfiB4ZU99XWfgZhNE68fcyI1H8N47gEGy0PU
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
