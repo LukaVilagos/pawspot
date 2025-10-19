@@ -1,9 +1,9 @@
-import type { UserResponseDto, UsersListResponseDto } from "@pawspot/api-contracts";
+import type { UserResponse, UsersListResponse } from "@pawspot/api-contracts";
 import { useUserApi } from "~/composables/useUserApi";
 
 export const useUserStore = defineStore('user', () => {
-    const users = ref<UsersListResponseDto>([]);
-    const user = ref<UserResponseDto | null>(null);
+    const users = ref<UsersListResponse>([]);
+    const user = ref<UserResponse | null>(null);
     const userCount = computed(() => users.value.length);
     const loading = ref(true);
     const error = ref<string | null>(null);

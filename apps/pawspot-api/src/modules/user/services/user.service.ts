@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { User } from '@pawspot/db';
-import Logger from '@pawspot/logger';
-import { PrismaService } from 'src/prisma/services/prisma.service';
+import { PrismaService } from 'src/modules/prisma/services/prisma.service';
 
 @Injectable()
 export class UserService {
@@ -11,10 +10,14 @@ export class UserService {
         return this.prisma.user.findMany();
     }
 
-    async getUserById(id: string): Promise<User | null> {
-        return this.prisma.user.findUnique({
+    async getUserById(id: string): Promise<User> {
+        const user = await this.prisma.user.findUnique({
             where: { id },
         });
+        if (!user) {
+            throw new Error('User not found');
+        }
+        return user;
     }
 
     async getUserByEmail(email: string): Promise<User | null> {

@@ -22,7 +22,9 @@
   },
   "packageManager": "pnpm@10.18.3",
   "dependencies": {
-    "typescript": "^5.9.3"
+    "nestjs-zod": "^5.0.1",
+    "typescript": "^5.9.3",
+    "zod": "^4.1.12"
   },
   "license": "ISC"
 }

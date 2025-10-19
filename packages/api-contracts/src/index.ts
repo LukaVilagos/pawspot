@@ -1,2 +1,2 @@
-export * from './user';
-export * from './types';
+export * from './modules/user';
+export * from './shared';
