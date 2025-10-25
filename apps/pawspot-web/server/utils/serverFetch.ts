@@ -9,7 +9,7 @@ export async function protectedServerFetch<T = unknown>(
   url: string,
   options: ServerFetchOptions = {}
 ): Promise<T> {
-  const session = await getUserSession(event);
+  const session = await requireUserSession(event);
   const originalHeaders = options.headers;
   const headers: Record<string, string> = { ...(originalHeaders || {}) };
   if (session?.access_token) {

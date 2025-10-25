@@ -1,16 +1,12 @@
-import type {
-  UserResponse,
-  UsersListResponse,
-  UsersListResponseDto,
-} from "@pawspot/api-contracts";
+import type { UserResponse, UsersListResponse } from "@pawspot/api-contracts";
 
 export const useUserApi = () => {
-  const getAllUsers = async (): Promise<UsersListResponse> => {
-    return await $fetch<UsersListResponseDto>("/api/user");
+  const getAllUsers = async () => {
+    return await useFetch<UsersListResponse>("/api/user");
   };
 
-  const getUserById = async (id: string): Promise<UserResponse> => {
-    return await $fetch<UserResponse>(`/api/user/${id}`);
+  const getUserById = async (id: string) => {
+    return await useFetch<UserResponse>(`/api/user/${id}`);
   };
 
   return {

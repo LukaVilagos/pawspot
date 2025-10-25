@@ -16,7 +16,7 @@ export const useUserStore = defineStore("user", () => {
 
     try {
       const data = await getAllUsers();
-      users.value = data || [];
+      users.value = data.data.value || [];
     } catch (e) {
       error.value = "Failed to fetch users";
       console.error(e);
@@ -31,7 +31,7 @@ export const useUserStore = defineStore("user", () => {
 
     try {
       const data = await getUserById(id);
-      user.value = data || null;
+      user.value = data.data.value || null;
     } catch (e) {
       error.value = "Failed to fetch user";
       user.value = null;
