@@ -1,13 +1,12 @@
-import { QueryOptions, PaginatedResponse } from "../../shared";
+import { PaginatedResponse, QueryOptions } from "../../shared";
 import { CreateSanctuaryRequestDto, SanctuariesListResponseDto, SanctuaryResponseDto } from "./dtos";
 import { SANCTUARY_ROUTES } from "./routes";
 
-export const SanctuarryContract = {
+export const SanctuaryContract = {
     getAll: {
         method: 'GET' as const,
         route: SANCTUARY_ROUTES.ROOT,
-        params: {} as QueryOptions<SanctuariesListResponseDto>,
-        response: {} as PaginatedResponse<SanctuariesListResponseDto>,
+        response: {} as SanctuariesListResponseDto,
     },
     getById: {
         method: 'GET' as const,
@@ -31,6 +30,19 @@ export const SanctuarryContract = {
         request: {} as Partial<CreateSanctuaryRequestDto>,
         response: {} as SanctuaryResponseDto,
     },
+    delete: {
+        method: 'DELETE' as const,
+        route: SANCTUARY_ROUTES.DELETE,
+        params: {} as { id: string },
+        build: (p: { id: string }) => `${SANCTUARY_ROUTES.ROOT}/${encodeURIComponent(p.id)}`,
+    },
+    search: {
+        method: 'POST' as const,
+        route: SANCTUARY_ROUTES.SEARCH,
+        build: () => `${SANCTUARY_ROUTES.ROOT}/${SANCTUARY_ROUTES.SEARCH}`,
+        request: {} as QueryOptions<SanctuaryResponseDto>,
+        response: {} as PaginatedResponse<SanctuaryResponseDto>,
+    },
 } as const;
 
-export type SanctuaryContractType = typeof SanctuarryContract;
+export type SanctuaryContractType = typeof SanctuaryContract;

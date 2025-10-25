@@ -10,8 +10,7 @@ export const UserContract = {
     getAll: {
         method: 'GET' as const,
         route: USER_ROUTES.ROOT,
-        params: {} as QueryOptions<UserResponseDto>,
-        response: {} as PaginatedResponse<UsersListResponseDto>,
+        response: {} as UsersListResponseDto,
     },
     getById: {
         method: 'GET' as const,
@@ -40,6 +39,13 @@ export const UserContract = {
         route: USER_ROUTES.DELETE,
         params: {} as { id: string },
         build: (p: { id: string }) => `${USER_ROUTES.ROOT}/${encodeURIComponent(p.id)}`,
+    },
+    search: {
+        method: 'POST' as const,
+        route: USER_ROUTES.SEARCH,
+        build: () => `${USER_ROUTES.ROOT}/${USER_ROUTES.SEARCH}`,
+        request: {} as QueryOptions<UserResponseDto>,
+        response: {} as PaginatedResponse<UserResponseDto>,
     },
 } as const;
 
