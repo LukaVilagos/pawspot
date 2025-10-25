@@ -11,6 +11,12 @@ export const CreateUserRequestSchema = z.object({
   name: z.string().nullable(),
 });
 
+export const UpdateUserRequestSchema = z.object({
+  email: z.email().optional(),
+  password: z.string().min(6).optional(),
+  name: z.string().nullable().optional(),
+});
+
 // ============================================================================
 
 // ============================================================================
@@ -40,10 +46,10 @@ export type CreateUserRequest = z.infer<typeof CreateUserRequestSchema>;
 // DTO EXPORTS (for NestJS)
 // ============================================================================
 
-export class UserResponseDto extends createZodDto(UserResponseSchema) {}
+export class UserResponseDto extends createZodDto(UserResponseSchema) { }
 export class UsersListResponseDto extends createZodDto(
   UsersListResponseSchema
-) {}
+) { }
 export class CreateUserRequestDto extends createZodDto(
   CreateUserRequestSchema
-) {}
+) { }

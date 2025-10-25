@@ -11,6 +11,11 @@ export const CreateSanctuaryRequestSchema = z.object({
   location: z.string(),
 });
 
+export const UpdateSanctuaryRequestSchema = z.object({
+  name: z.string().optional(),
+  location: z.string().optional(),
+});
+
 // ============================================================================
 // RESPONSE SCHEMAS
 // ============================================================================
@@ -42,10 +47,10 @@ export type SanctuariesListResponse = z.infer<
 
 export class SanctuaryResponseDto extends createZodDto(
   SanctuaryResponseSchema
-) {}
+) { }
 export class SanctuariesListResponseDto extends createZodDto(
   SanctuariesListResponseSchema
-) {}
+) { }
 export class CreateSanctuaryRequestDto extends createZodDto(
   CreateSanctuaryRequestSchema
-) {}
+) { }

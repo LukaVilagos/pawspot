@@ -5,6 +5,12 @@ export type ApiResponse<T> = {
     message?: string;
 };
 
+export type ApiRequest<T> = {
+    data: T;
+    sort: [keyof T, 'asc' | 'desc'][];
+    filter: [keyof T, any][];
+};
+
 export type PaginatedResponse<T> = {
     items: T[];
     total: number;
