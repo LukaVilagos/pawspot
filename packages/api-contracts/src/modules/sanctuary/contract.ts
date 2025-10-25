@@ -1,4 +1,4 @@
-import { PaginatedResponse } from "../../shared";
+import { QueryOptions, PaginatedResponse } from "../../shared";
 import { CreateSanctuaryRequestDto, SanctuariesListResponseDto, SanctuaryResponseDto } from "./dtos";
 import { SANCTUARY_ROUTES } from "./routes";
 
@@ -6,6 +6,7 @@ export const SanctuarryContract = {
     getAll: {
         method: 'GET' as const,
         route: SANCTUARY_ROUTES.ROOT,
+        params: {} as QueryOptions<SanctuariesListResponseDto>,
         response: {} as PaginatedResponse<SanctuariesListResponseDto>,
     },
     getById: {

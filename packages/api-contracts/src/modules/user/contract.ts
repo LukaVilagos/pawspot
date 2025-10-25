@@ -4,13 +4,13 @@ import type {
     UserResponseDto,
     CreateUserRequestDto
 } from './dtos';
-import { ApiRequest, PaginatedResponse } from '../..';
+import { QueryOptions, PaginatedResponse } from '../..';
 
 export const UserContract = {
     getAll: {
         method: 'GET' as const,
         route: USER_ROUTES.ROOT,
-        params: {} as ApiRequest<UserResponseDto>,
+        params: {} as QueryOptions<UserResponseDto>,
         response: {} as PaginatedResponse<UsersListResponseDto>,
     },
     getById: {
