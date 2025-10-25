@@ -1,20 +1,20 @@
-import { z } from 'zod';
-import { createZodDto } from 'nestjs-zod';
-import { UserResponseSchema } from '../user';
+import { z } from "zod";
+import { createZodDto } from "nestjs-zod";
+import { UserResponseSchema } from "../user";
 
 // ============================================================================
 // REQUEST SCHEMAS
 // ============================================================================
 
 export const RegoisterUserRequestSchema = z.object({
-    email: z.email(),
-    password: z.string().min(6),
-    name: z.string()
+  email: z.email(),
+  password: z.string().min(6),
+  name: z.string(),
 });
 
 export const LoginUserRequestSchema = z.object({
-    email: z.email(),
-    password: z.string().min(6),
+  email: z.email(),
+  password: z.string().min(6),
 });
 
 // ============================================================================
@@ -24,17 +24,17 @@ export const LoginUserRequestSchema = z.object({
 // ============================================================================
 
 export const AccessTokenResponseSchema = z.object({
-    access_token: z.string(),
+  access_token: z.string(),
 });
 
 export const LoginResponseSchema = z.object({
-    ...AccessTokenResponseSchema.shape,
-    user: UserResponseSchema,
+  ...AccessTokenResponseSchema.shape,
+  user: UserResponseSchema,
 });
 
 export const RegisterResponseSchema = z.object({
-    ...AccessTokenResponseSchema.shape,
-    user: UserResponseSchema,
+  ...AccessTokenResponseSchema.shape,
+  user: UserResponseSchema,
 });
 
 // ============================================================================
@@ -51,7 +51,11 @@ export type RegisterResponse = z.infer<typeof RegisterResponseSchema>;
 // DTO EXPORTS (for NestJS)
 // ============================================================================
 
-export class RegisterRequestDto extends createZodDto(RegoisterUserRequestSchema) { }
-export class AccessTokenResponseDto extends createZodDto(AccessTokenResponseSchema) { }
-export class LoginResponseDto extends createZodDto(LoginResponseSchema) { }
-export class RegisterResponseDto extends createZodDto(RegisterResponseSchema) { }
+export class RegisterRequestDto extends createZodDto(
+  RegoisterUserRequestSchema
+) {}
+export class AccessTokenResponseDto extends createZodDto(
+  AccessTokenResponseSchema
+) {}
+export class LoginResponseDto extends createZodDto(LoginResponseSchema) {}
+export class RegisterResponseDto extends createZodDto(RegisterResponseSchema) {}

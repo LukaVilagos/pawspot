@@ -1,52 +1,53 @@
 import type { UserResponse, UsersListResponse } from "@pawspot/api-contracts";
 import { useUserApi } from "~/composables/useUserApi";
 
-export const useUserStore = defineStore('user', () => {
-    const users = ref<UsersListResponse>([]);
-    const user = ref<UserResponse | null>(null);
-    const userCount = computed(() => users.value.length);
-    const loading = ref(true);
-    const error = ref<string | null>(null);
+export const useUserStore = defineStore("user", () => {
+  const users = ref<UsersListResponse>([]);
+  const user = ref<UserResponse | null>(null);
+  const userCount = computed(() => users.value.length);
+  const loading = ref(true);
+  const error = ref<string | null>(null);
 
-    const { getAllUsers, getUserById } = useUserApi();
+  const { getAllUsers, getUserById } = useUserApi();
 
-    const fetchUsers = async () => {
-        loading.value = true;
-        error.value = null;
+  const fetchUsers = async () => {
+    loading.value = true;
+    error.value = null;
 
-        try {
-            const data = await getAllUsers();
-            users.value = data || [];
-        } catch (e) {
-            error.value = 'Failed to fetch users';
-            console.error(e);
-        } finally {
-            loading.value = false;
-        }
-    };
+    try {
+      const data = await getAllUsers();
+      users.value = data || [];
+    } catch (e) {
+      error.value = "Failed to fetch users";
+      console.error(e);
+    } finally {
+      loading.value = false;
+    }
+  };
 
-    const fetchUserById = async (id: string) => {
-        loading.value = true;
-        error.value = null;
+  const fetchUserById = async (id: string) => {
+    loading.value = true;
+    error.value = null;
 
-        try {
-            const data = await getUserById(id);
-            user.value = data || null;
-        } catch (e) {
-            error.value = 'Failed to fetch user';
-            console.error(e);
-        } finally {
-            loading.value = false;
-        }
-    };
+    try {
+      const data = await getUserById(id);
+      user.value = data || null;
+    } catch (e) {
+      error.value = "Failed to fetch user";
+      user.value = null;
+      console.error(e);
+    } finally {
+      loading.value = false;
+    }
+  };
 
-    return {
-        users,
-        userCount,
-        loading,
-        error,
-        user,
-        fetchUsers,
-        fetchUserById,
-    };
+  return {
+    users,
+    userCount,
+    loading,
+    error,
+    user,
+    fetchUsers,
+    fetchUserById,
+  };
 });
