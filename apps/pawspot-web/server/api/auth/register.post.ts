@@ -1,22 +1,22 @@
 import { AuthContract } from "@pawspot/api-contracts";
 
-export default defineEventHandler(async (event) => {
-  type BodyType = typeof AuthContract.register.request;
-  const body: BodyType = await readBody(event);
+export default defineEventHandler(
+  async (event): Promise<typeof AuthContract.register.response> => {
+    type BodyType = typeof AuthContract.register.request;
+    const body: BodyType = await readBody(event);
 
-  const response = await $fetch<typeof AuthContract.register.response>(
-    AuthContract.register.build(),
-    {
+    const response = await publicServerFetch<
+      typeof AuthContract.register.response
+    >(event, AuthContract.register.build(), {
       method: AuthContract.register.method,
       body,
-      baseURL: useRuntimeConfig().public.apiUrl,
-    }
-  );
+    });
 
-  await setUserSession(event, {
-    user: response?.user,
-    access_token: response?.access_token,
-  });
+    await setUserSession(event, {
+      user: response?.user,
+      access_token: response?.access_token,
+    });
 
-  return response;
-});
+    return response;
+  }
+);
