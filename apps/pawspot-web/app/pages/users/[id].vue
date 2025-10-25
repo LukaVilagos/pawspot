@@ -24,5 +24,5 @@ const route = useRoute();
 const userId = route.params.id as string;
 const { user, loading, error } = storeToRefs(userStore);
 
-await callOnce("user", () => userStore.fetchUserById(userId));
+await userStore.fetchUserById(userId);
 </script>
