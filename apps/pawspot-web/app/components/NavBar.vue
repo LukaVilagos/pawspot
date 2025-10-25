@@ -11,14 +11,14 @@
         <UButton label="Logout" @click="handleLogout" />
       </li>
       <li v-if="isAuthenticated && authUser">
-        <span>Welcome, {{ authUser.name || 'hello' }}!</span>
+        <span>Welcome, {{ authUser.name }}!</span>
       </li>
     </ul>
   </nav>
 </template>
 
 <script setup lang="ts">
-import { useAuth } from '~/composables/useAuth';
+import { useAuth } from "~/composables/useAuth";
 
 const auth = useAuth();
 const isAuthenticated = computed(() => auth.loggedIn.value);
