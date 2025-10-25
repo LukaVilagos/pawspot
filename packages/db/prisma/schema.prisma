@@ -15,10 +15,48 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  name      String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  password  String
+  id          String      @id @default(cuid())
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  deletedAt   DateTime?
+  email       String      @unique
+  name        String?
+  password    String
+  sanctuaries Sanctuary[]
+}
+
+model Sanctuary {
+  id        String    @id @default(cuid())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  name      String
+  location  String
+  ownerId   String
+  owner     User      @relation(fields: [ownerId], references: [id])
+  animals   Animal[]
+  qrCode    QrCode?
+}
+
+model Animal {
+  id          String    @id @default(cuid())
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+  name        String
+  species     String
+  age         Int
+  sanctuaryId String
+  sanctuary   Sanctuary @relation(fields: [sanctuaryId], references: [id])
+}
+
+model QrCode {
+  id          String    @id @default(cuid())
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+  targetUrl   String
+  imageUrl    String
+  sanctuary   Sanctuary @relation(fields: [sanctuaryId], references: [id])
+  sanctuaryId String    @unique
 }
