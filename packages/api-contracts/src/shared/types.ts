@@ -1,10 +1,3 @@
-export type QueryOptions<T> = {
-    sort?: SortEntry<T>[];
-    filter?: FilterEntry<T>[];
-    page?: number;
-    limit?: number;
-};
-
 type Primitive = string | number | boolean | bigint | symbol | null | undefined | Date;
 
 type ArrayElement<A> = A extends (infer T)[] ? T : never;
@@ -21,6 +14,15 @@ export type SortEntry<T> = { key: NestedKeyOf<T>; order: SortOrder };
 
 export type FilterEntry<T> = [NestedKeyOf<T>, any];
 
+export type SortOrder = 'asc' | 'desc';
+
+export type QueryOptions<T> = {
+    sort?: SortEntry<T>[];
+    filter?: FilterEntry<T>[];
+    page?: number;
+    limit?: number;
+};
+
 export type PaginatedResponse<T> = {
     items: T[];
     total: number;
@@ -29,4 +31,3 @@ export type PaginatedResponse<T> = {
     totalPages: number;
 };
 
-export type SortOrder = 'asc' | 'desc';
