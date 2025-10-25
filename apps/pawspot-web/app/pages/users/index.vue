@@ -28,6 +28,7 @@
             </div>
         </div>
 </template>
+
 <script setup lang="ts">
 const userStore = useUserStore();
 await callOnce('users', () => userStore.fetchUsers(), { mode: 'navigation' });

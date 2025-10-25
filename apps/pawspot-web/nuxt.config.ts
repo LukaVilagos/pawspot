@@ -2,7 +2,7 @@
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
-  modules: ['@nuxt/eslint', '@nuxt/image', '@nuxt/ui', '@pinia/nuxt', '@vee-validate/nuxt',],
+  modules: ['@nuxt/eslint', '@nuxt/image', '@nuxt/ui', '@pinia/nuxt', '@vee-validate/nuxt', 'pinia-plugin-persistedstate/nuxt',],
   css: ['~/assets/css/main.css'],
   runtimeConfig: {
     public: {
@@ -14,5 +14,8 @@ export default defineNuxtConfig({
   },
   pinia: {
     storesDirs: ['app/stores']
+  },
+  veeValidate: {
+    autoImports: true
   }
 })

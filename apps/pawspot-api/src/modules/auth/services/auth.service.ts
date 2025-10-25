@@ -1,8 +1,7 @@
-//auth.service.ts
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
-import { AccessTokenResponseDto, CreateUserRequestDto, LoginResponseDto, RegisterRequestDto, RegisterResponseDto, UserResponseDto } from '@pawspot/api-contracts';
+import { CreateUserRequestDto, LoginResponseDto, RegisterRequestDto, RegisterResponseDto, UserResponseDto } from '@pawspot/api-contracts';
 import { User } from '@pawspot/db';
 import { UserService } from 'src/modules/user/services/user.service';
 
