@@ -1,49 +1,51 @@
-import { z } from "zod";
+import z from "zod";
+import { UserResponseSchema } from "../user";
 import { createZodDto } from "nestjs-zod";
 
 // ============================================================================
 // REQUEST SCHEMAS
 // ============================================================================
 
-export const CreateUserRequestSchema = z.object({
-  email: z.email(),
-  password: z.string().min(6),
-  name: z.string().nullable(),
+export const CreateSanctuaryRequestSchema = z.object({
+  name: z.string(),
+  location: z.string(),
 });
-
-// ============================================================================
 
 // ============================================================================
 // RESPONSE SCHEMAS
 // ============================================================================
 
-export const UserResponseSchema = z.object({
+export const SanctuaryResponseSchema = z.object({
   id: z.string(),
   createdAt: z.date(),
   updatedAt: z.date(),
   deletedAt: z.date().nullable(),
-  email: z.email(),
-  name: z.string().nullable(),
+  name: z.string(),
+  location: z.string(),
+  owner: UserResponseSchema,
 });
 
-export const UsersListResponseSchema = z.array(UserResponseSchema);
+export const SanctuariesListResponseSchema = z.array(SanctuaryResponseSchema);
 
 // ============================================================================
 // TYPE EXPORTS
 // ============================================================================
 
-export type UserResponse = z.infer<typeof UserResponseSchema>;
-export type UsersListResponse = z.infer<typeof UsersListResponseSchema>;
-export type CreateUserRequest = z.infer<typeof CreateUserRequestSchema>;
+export type SanctuaryResponse = z.infer<typeof SanctuaryResponseSchema>;
+export type SanctuariesListResponse = z.infer<
+  typeof SanctuariesListResponseSchema
+>;
 
 // ============================================================================
 // DTO EXPORTS (for NestJS)
 // ============================================================================
 
-export class UserResponseDto extends createZodDto(UserResponseSchema) {}
-export class UsersListResponseDto extends createZodDto(
-  UsersListResponseSchema
+export class SanctuaryResponseDto extends createZodDto(
+  SanctuaryResponseSchema
 ) {}
-export class CreateUserRequestDto extends createZodDto(
-  CreateUserRequestSchema
+export class SanctuariesListResponseDto extends createZodDto(
+  SanctuariesListResponseSchema
+) {}
+export class CreateSanctuaryRequestDto extends createZodDto(
+  CreateSanctuaryRequestSchema
 ) {}

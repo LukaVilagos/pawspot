@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start:web": "pnpm --filter pawspot-web dev",
-    "start:api": "pnpm --filter pawspot-api start:dev",
+    "start:web": "pnpm --filter web dev",
+    "start:api": "pnpm --filter api start:dev",
     "start": "pnpm run start:web & pnpm run start:api",
     "build": "pnpm recursive run build",
     "test": "pnpm recursive run test",
