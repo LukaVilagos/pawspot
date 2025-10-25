@@ -12,11 +12,6 @@ export default defineEventHandler(async (event) => {
   type GetByIdParams = typeof UserContract.getById.params;
   const params: GetByIdParams = { id };
 
-  // If there's a stored session with an access token, forward it to the backend
-  // so protected endpoints can be accessed.
-  // `getUserSession` is provided by nuxt-auth-utils as an auto-imported server util.
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
   const session = await getUserSession(event);
 
   const headers: Record<string, string> = {};
