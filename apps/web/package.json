@@ -1,5 +1,5 @@
 {
-  "name": "pawspot-web",
+  "name": "web",
   "type": "module",
   "private": true,
   "scripts": {
