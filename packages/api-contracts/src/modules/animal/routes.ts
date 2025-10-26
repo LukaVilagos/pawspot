@@ -1,9 +1,9 @@
 export const ANIMAL_ROUTES = {
     ROOT: '/animals',
     BY_ID: ":id",
-    CREATE: 'animal',
-    UPDATE: 'animal/:id',
-    DELETE: 'animal/:id',
+    CREATE: '',
+    UPDATE: ':id',
+    DELETE: ':id',
     SEARCH: 'search',
 }
 

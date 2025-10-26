@@ -1,14 +1,15 @@
 import { Injectable } from '@nestjs/common';
-import { CreateUserRequestDto, UserResponseDto } from '@pawspot/api-contracts';
+import { CreateUserRequestDto, PaginatedResponse, QueryOptionsDto, UserResponseDto, UsersListResponseDto } from '@pawspot/api-contracts';
 import { User } from '@pawspot/db';
 import { PrismaService } from 'src/modules/prisma/services/prisma.service';
+import { SearchService } from 'src/modules/prisma/services/search.service';
 
 
 @Injectable()
 export class UserService {
-  constructor(private prisma: PrismaService) { }
+  constructor(private prisma: PrismaService, private searchService: SearchService) { }
 
-  async getUser(): Promise<UserResponseDto[]> {
+  async getUser(): Promise<UsersListResponseDto> {
     return this.prisma.client.user.findMany();
   }
 
@@ -57,5 +58,9 @@ export class UserService {
       where: { id },
       data: { deletedAt: new Date() },
     });
+  }
+
+  async searchUsers(query: QueryOptionsDto<UserResponseDto>): Promise<PaginatedResponse<UserResponseDto>> {
+    return this.searchService.search('user', query, { omit: ['password'] });
   }
 }

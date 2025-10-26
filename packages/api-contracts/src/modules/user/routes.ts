@@ -1,7 +1,7 @@
 export const USER_ROUTES = {
     ROOT: '/user',
     BY_ID: ':id',
-    CREATE: 'user',
+    CREATE: '',
     UPDATE: ':id',
     DELETE: ':id',
     SEARCH: 'search',

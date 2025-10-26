@@ -31,3 +31,11 @@ export type PaginatedResponse<T> = {
     totalPages: number;
 };
 
+export class QueryOptionsDto<T> {
+    sort?: SortEntry<T>[];
+    filter?: FilterEntry<T>[];
+    page?: number;
+    limit?: number;
+    totalPages?: number;
+}
+

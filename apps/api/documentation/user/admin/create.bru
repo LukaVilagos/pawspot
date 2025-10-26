@@ -1,0 +1,24 @@
+meta {
+  name: create
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{apiUrlAdmin}}{{routeRoot}}
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "email": "john.doe+20@example.com",
+    "password": "123456",
+    "name": "JohnDoe+1"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

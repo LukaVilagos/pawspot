@@ -1,9 +1,9 @@
 export const SANCTUARY_ROUTES = {
     ROOT: '/sanctuary',
     BY_ID: ':id',
-    CREATE: 'sanctuary',
-    UPDATE: 'sanctuary/:id',
-    DELETE: 'sanctuary/:id',
+    CREATE: '',
+    UPDATE: ':id',
+    DELETE: ':id',
     SEARCH: 'search',
 } as const;
 

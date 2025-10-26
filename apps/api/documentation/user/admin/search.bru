@@ -1,19 +1,20 @@
 meta {
-  name: login
+  name: search
   type: http
-  seq: 1
+  seq: 5
 }
 
 post {
-  url: {{apiUrl}}{{routeRoot}}/login
+  url: {{apiUrlAdmin}}{{routeRoot}}/search
   body: json
   auth: inherit
 }
 
 body:json {
   {
-    "email": "john.doe+2@example.com",
-    "password": "JohnDoe123"
+    "filter": [
+      ["type", "ADMIN"]
+    ]
   }
 }
 

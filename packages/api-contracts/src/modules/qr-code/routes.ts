@@ -1,9 +1,9 @@
 export const QRCODE_ROUTES = {
     ROOT: '/qrcodes',
     BY_ID: ':id',
-    CREATE: 'qrcode',
-    UPDATE: 'qrcode/:id',
-    DELETE: 'qrcode/:id',
+    CREATE: '',
+    UPDATE: '/:id',
+    DELETE: '/:id',
     SEARCH: 'search',
 }
 

@@ -1,0 +1,25 @@
+meta {
+  name: update
+  type: http
+  seq: 3
+}
+
+put {
+  url: {{apiUrlAdmin}}{{routeRoot}}/{{adminUserId}}
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "email": "john.doe+updated+60@example.com",
+    "password": "123456",
+    "name": "JohnDoe+Updated+6",
+    "type": "ADMIN"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
