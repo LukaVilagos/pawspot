@@ -2,8 +2,8 @@ export const USER_ROUTES = {
     ROOT: '/user',
     BY_ID: ':id',
     CREATE: 'user',
-    UPDATE: 'user/:id',
-    DELETE: 'user/:id',
+    UPDATE: ':id',
+    DELETE: ':id',
     SEARCH: 'search',
 } as const;
 

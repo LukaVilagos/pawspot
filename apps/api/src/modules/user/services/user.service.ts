@@ -1,19 +1,21 @@
 import { Injectable } from '@nestjs/common';
-import { CreateUserRequestDto } from '@pawspot/api-contracts';
+import { CreateUserRequestDto, UserResponseDto } from '@pawspot/api-contracts';
 import { User } from '@pawspot/db';
 import { PrismaService } from 'src/modules/prisma/services/prisma.service';
 
+
 @Injectable()
 export class UserService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) { }
 
-  async getUser(): Promise<User[]> {
-    return this.prisma.user.findMany();
+  async getUser(): Promise<UserResponseDto[]> {
+    return this.prisma.client.user.findMany();
   }
 
-  async getUserById(id: string): Promise<User> {
-    const user = await this.prisma.user.findUnique({
+  async getUserById(id: string): Promise<UserResponseDto> {
+    const user = await this.prisma.client.user.findUnique({
       where: { id },
+      omit: { password: true },
     });
     if (!user) {
       throw new Error('User not found');
@@ -22,16 +24,38 @@ export class UserService {
   }
 
   async getUserByEmail(email: string): Promise<User | null> {
-    const user = await this.prisma.user.findUnique({
+    const user = await this.prisma.client.user.findUnique({
       where: { email },
     });
 
     return user;
   }
 
-  async createUser(user: CreateUserRequestDto): Promise<User> {
-    return this.prisma.user.create({
+  async registerUser(user: CreateUserRequestDto): Promise<User> {
+    return this.prisma.client.user.create({
       data: user,
+    });
+  }
+
+  async createUser(user: CreateUserRequestDto): Promise<UserResponseDto> {
+    return this.prisma.client.user.create({
+      data: user,
+      omit: { password: true },
+    });
+  }
+
+  async updateUser(id: string, user: Partial<CreateUserRequestDto>): Promise<UserResponseDto> {
+    return this.prisma.client.user.update({
+      where: { id },
+      data: user,
+      omit: { password: true },
+    });
+  }
+
+  async deleteUser(id: string) {
+    return this.prisma.client.user.update({
+      where: { id },
+      data: { deletedAt: new Date() },
     });
   }
 }
