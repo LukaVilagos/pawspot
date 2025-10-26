@@ -12,6 +12,11 @@ export class AuthService {
         private jwtService: JwtService,
     ) { }
 
+    private async serializeUser(user: User): Promise<UserResponseDto> {
+        const { password, ...serializedUser } = user;
+        return serializedUser;
+    }
+
     async validateUser(email: string, password: string): Promise<UserResponseDto> {
         const user: User | null = await this.usersService.getUserByEmail(email);
         if (!user) {
@@ -21,12 +26,13 @@ export class AuthService {
         if (!isMatch) {
             throw new BadRequestException('Password does not match');
         }
-        return user;
+        return this.serializeUser(user);
     }
 
     async login(user: User): Promise<LoginResponseDto> {
         const payload = { email: user.email, id: user.id, type: user.type };
-        return { access_token: this.jwtService.sign(payload), user };
+        const safeUser = await this.serializeUser(user);
+        return { access_token: this.jwtService.sign(payload), user: safeUser };
     }
 
     async register(user: RegisterRequestDto): Promise<RegisterResponseDto> {

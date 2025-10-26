@@ -13,5 +13,9 @@
 <script setup lang="ts">
 import { useLoginForm } from '~/composables/forms/useLoginForm';
 
-const { email, emailAttrs, password, passwordAttrs, errors, isSubmitting, handleSubmitForm } = useLoginForm();
+const { isAdmin = false } = defineProps<{
+  isAdmin?: boolean;
+}>();
+
+const { email, emailAttrs, password, passwordAttrs, errors, isSubmitting, handleSubmitForm } = useLoginForm(isAdmin);
 </script>

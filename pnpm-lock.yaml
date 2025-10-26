@@ -26,6 +26,9 @@ importers:
       '@nuxt/ui':
         specifier: 4.1.0
         version: 4.1.0(@babel/parser@7.28.4)(change-case@5.4.4)(db0@0.3.4)(embla-carousel@8.6.0)(ioredis@5.8.2)(magicast@0.3.5)(typescript@5.9.3)(vite@7.1.12(@types/node@22.18.10)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.0)(yaml@2.8.1))(vue-router@4.6.3(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(zod@4.1.12)
+      '@pawspot/api-contracts':
+        specifier: workspace:*
+        version: link:../../packages/api-contracts
       eslint:
         specifier: ^9.37.0
         version: 9.37.0(jiti@2.6.1)

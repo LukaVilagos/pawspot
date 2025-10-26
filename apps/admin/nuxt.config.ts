@@ -2,5 +2,14 @@
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
-  modules: ['@nuxt/eslint', '@nuxt/image', '@nuxt/ui']
+  modules: ['@nuxt/eslint', '@nuxt/image', '@nuxt/ui'],
+  extends: "../web",
+  devServer: {
+    port: 3002,
+  },
+  runtimeConfig: {
+    public: {
+      apiUrl: process.env.API_URL || "http://localhost:3000",
+    },
+  },
 })

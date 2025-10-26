@@ -30,6 +30,15 @@ export const useAuth = () => {
     await navigateTo("/");
   };
 
+  const loginAdmin = async (credentials: LoginUserRequest) => {
+    await $fetch("/api/auth/admin/login", {
+      method: "POST",
+      body: credentials,
+    });
+    await refreshSession();
+    await navigateTo("/");
+  }
+
   const register = async (payload: RegisterUserRequest) => {
     await $fetch("/api/auth/register", {
       method: "POST",
@@ -50,6 +59,7 @@ export const useAuth = () => {
     user,
     token,
     login,
+    loginAdmin,
     register,
     logout,
     refreshSession,
