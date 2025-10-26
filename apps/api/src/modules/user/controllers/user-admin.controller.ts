@@ -9,11 +9,6 @@ import { AdminGuard } from 'src/modules/auth/guards/admin.guard';
 export class UserAdminController {
     constructor(private readonly userService: UserService) { }
 
-    @Get()
-    async getAll(): Promise<UsersListResponseDto> {
-        return this.userService.getUser();
-    }
-
     @Get(USER_ROUTES.BY_ID)
     async getUserById(@Param('id') id: string): Promise<UserResponseDto> {
         return this.userService.getUserById(id);

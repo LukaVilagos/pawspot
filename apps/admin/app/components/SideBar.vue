@@ -1,18 +1,26 @@
 <template>
-    <div class="bg-blue-900 p-4">
-        <nav>
-            <ul class="flex flex-col gap-4">
-                <li>
-                    <NuxtLink to="/">Dashboard</NuxtLink>
-                </li>
-                <li>
-                    <UButton label="LogOut" @click="logout" v-if="loggedIn" />
-                </li>
-            </ul>
-        </nav>
-    </div>
+    <UNavigationMenu
+        orientation="vertical"
+        :items="items"
+        class="data-[orientation=vertical]:w-48 h-full flex flex-col"
+    >
+        <template #list-trailing>
+            <div class="mt-auto p-2">
+                <UButton label="Log out" @click="logout" v-if="loggedIn" class="w-full" />
+            </div>
+        </template>
+    </UNavigationMenu>
 </template>
 
 <script setup lang="ts">
+import type { NavigationMenuItem } from '@nuxt/ui'
+
 const { loggedIn, logout } = useAuth();
+
+const items = ref<NavigationMenuItem[][]>([
+    [
+        { label: 'Dashboard', to: '/' },
+        { label: 'Users', to: '/user' },
+    ],
+]);
 </script>
