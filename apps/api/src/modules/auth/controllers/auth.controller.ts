@@ -16,6 +16,13 @@ export class AuthController {
         return response;
     }
 
+    @UseGuards(AuthGuard('admin-local'))
+    @Post(AUTH_ROUTES.ADMIN_LOGIN)
+    async adminLogin(@Request() req): Promise<LoginResponseDto | BadRequestException> {
+        const response = await this.authService.login(req.user);
+        return response;
+    }
+
     @Post(AUTH_ROUTES.REGISTER)
     async register(@Body() registerBody: RegisterRequestDto): Promise<RegisterResponseDto | BadRequestException> {
         return this.authService.register(registerBody);
