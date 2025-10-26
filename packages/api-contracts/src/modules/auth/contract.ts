@@ -13,6 +13,13 @@ export const AuthContract = {
         request: {} as LoginUserRequest,
         response: {} as LoginResponseDto,
     },
+    adminLogin: {
+        method: 'POST' as const,
+        route: AUTH_ROUTES.ADMIN_LOGIN,
+        build: () => `${AUTH_ROUTES.ROOT}/${AUTH_ROUTES.ADMIN_LOGIN}`,
+        request: {} as LoginUserRequest,
+        response: {} as LoginResponseDto,
+    },
     register: {
         method: 'POST' as const,
         route: AUTH_ROUTES.REGISTER,
