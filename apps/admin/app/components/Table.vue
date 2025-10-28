@@ -279,21 +279,17 @@ function toggleSortingKey(id: string) {
 
   const idx = sorting.value.findIndex(s => s.id === id)
 
-  // cycle: none -> asc -> desc -> none
   if (idx === -1) {
-    // set to asc
     sorting.value = [{ id, desc: false }]
     return
   }
 
   const current = sorting.value[idx]
   if (current && !current.desc) {
-    // asc -> desc
     sorting.value = [{ id, desc: true }]
     return
   }
 
-  // desc -> remove
   sorting.value = sorting.value.filter(s => s.id !== id)
 }
 
