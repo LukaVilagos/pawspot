@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { createZodDto } from "nestjs-zod";
+import { PaginatedResponseSchema } from "../../shared";
 
 // ============================================================================
 // REQUEST SCHEMAS
@@ -30,13 +31,12 @@ export const UpdateUserRequestSchema = z.object({
 export const UserResponseSchema = z.object({
   id: z.string(),
   createdAt: z.date(),
-  updatedAt: z.date(),
-  deletedAt: z.date().nullable(),
   email: z.email(),
   name: z.string().nullable(),
   type: z.enum(['ADMIN', 'USER']),
 });
 
+export const PaginatedUserResponseSchema = PaginatedResponseSchema(UserResponseSchema);
 export const UsersListResponseSchema = z.array(UserResponseSchema);
 
 // ============================================================================
@@ -62,4 +62,6 @@ export class CreateUserRequestDto extends createZodDto(
 export class UpdateUserRequestDto extends createZodDto(
   UpdateUserRequestSchema
 ) { }
-
+export class PaginatedUserResponseDto extends createZodDto(
+  PaginatedUserResponseSchema
+) { }

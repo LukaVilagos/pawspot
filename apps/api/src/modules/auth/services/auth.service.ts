@@ -13,7 +13,7 @@ export class AuthService {
     ) { }
 
     private async serializeUser(user: User): Promise<UserResponseDto> {
-        const { password, ...serializedUser } = user;
+        const { password, updatedAt, deletedAt, ...serializedUser } = user;
         return serializedUser;
     }
 

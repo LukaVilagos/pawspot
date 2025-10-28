@@ -61,6 +61,6 @@ export class UserService {
   }
 
   async searchUsers(query: QueryOptionsDto<UserResponseDto>): Promise<PaginatedResponse<UserResponseDto>> {
-    return this.searchService.search('user', query, { omit: ['password'] });
+    return this.searchService.search<UserResponseDto>('user', query);
   }
 }

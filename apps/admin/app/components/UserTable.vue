@@ -1,67 +1,87 @@
+<template>
+  <div class="w-full">
+    <Table
+      :key="tableKey"
+      :data="searchResult?.items || []"
+      :columns="columns"
+      :page-size="searchResult?.limit || 10"
+      :total="searchResult?.total || 0"
+      :page="searchResult?.page || 1"
+      :loading="isLoading"
+      @filter-change="onFilterChange"
+      :show-filter="true"
+      :sticky="true"
+      :load-data="loadUsers"
+    />
+  </div>
+</template>
+
 <script setup lang="ts">
-import Table from './Table.vue'
+import type { UserResponse, QueryOptions } from '@pawspot/api-contracts'
+import type { TypedTableColumn } from '~/types/table-types'
 
 const userStore = useUserStore()
-const { users, isLoading } = storeToRefs(userStore)
+const { searchResult, isLoading } = storeToRefs(userStore)
 
-await userStore.searchUsers({ page: 1, limit: 10})
+const tableKey = computed(() => generateTableKey(searchResult.value))
 
-const columns = [
+
+async function onFilterChange(query: QueryOptions<UserResponse>) {
+  await userStore.searchUsers(query)
+}
+
+async function loadUsers(query: QueryOptions<UserResponse>): Promise<void> {
+  await userStore.searchUsers(query)
+}
+
+const columns: TypedTableColumn<UserResponse>[] = [
   {
     accessorKey: 'id',
-    header: '#',
-    cell: ({ row }: any) => `#${row.getValue('id')}`,
-  },
-  {
-    accessorKey: 'email',
-    header: 'Email',
-    cell: ({ row }: any) => row.getValue('email')
-  },
-  {
-    accessorKey: 'name',
-    header: 'Name',
-    cell: ({ row }: any) => row.getValue('name')
-  },
-  {
-    accessorKey: 'createdAt',
-    header: 'Created',
-    cell: ({ row }: any) => {
-      const v = row.getValue('createdAt')
-      try {
-        return v ? new Date(v).toLocaleString() : ''
-      } catch {
-        return v || ''
+    header: 'ID',
+    sortable: true,
+    filter: { type: 'text' },
+    meta: {
+      style: {
+        th: 'width: 15%',
+        td: 'width: 15%'
       }
     }
   },
   {
-    id: 'actions',
-    enableHiding: false,
-    cell: ({ row }: any) => {
-      const items = [
-        { label: 'View' },
-        { label: 'Edit' },
-        { label: 'Delete', color: 'error' }
-      ]
-
-      return h('div', { class: 'text-right' }, h('UDropdownMenu', {
-        content: { align: 'end' },
-        items,
-        'aria-label': 'Row actions'
-      }, () => h('UButton', {
-        icon: 'i-lucide-ellipsis-vertical',
-        color: 'neutral',
-        variant: 'ghost',
-        class: 'ml-auto',
-        'aria-label': 'Actions'
-      })))
+    accessorKey: 'email',
+    header: 'Email',
+    sortable: true,
+    filter: { type: 'text' },
+    meta: {
+      style: {
+        th: 'width: 35%',
+        td: 'width: 35%'
+      }
+    }
+  },
+  {
+    accessorKey: 'name',
+    header: 'Name',
+    sortable: true,
+    filter: { type: 'text' },
+    meta: {
+      style: {
+        th: 'width: 10%',
+        td: 'width: 10%'
+      }
+    }
+  },
+  {
+    accessorKey: 'createdAt',
+    header: 'Created At',
+    sortable: true,
+    filter: { type: 'range' },
+    meta: {
+      style: {
+        th: 'width: 20%',
+        td: 'width: 20%'
+      }
     }
   }
 ]
 </script>
-
-<template>
-  <div class="w-full">
-    <Table :data="users" :columns="columns" :pageSize="1" />
-  </div>
-</template>

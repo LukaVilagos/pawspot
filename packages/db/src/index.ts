@@ -36,6 +36,17 @@ export const prisma = new PrismaClient().$extends({
                     ? { AND: [args.where, { deletedAt: null }] } as any
                     : { deletedAt: null };
                 return query(args);
+            },
+
+            async count({ args, query }) {
+                if ((args as any)?.includeDeleted) {
+                    delete (args as any).includeDeleted;
+                    return query(args);
+                }
+                args.where = args.where
+                    ? { AND: [args.where, { deletedAt: null }] } as any
+                    : { deletedAt: null };
+                return query(args);
             }
         },
         user: {

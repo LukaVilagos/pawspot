@@ -1,6 +1,5 @@
 import type {
     UserResponse,
-    UsersListResponse,
     CreateUserRequest,
     UpdateUserRequest,
     QueryOptions,
@@ -8,21 +7,23 @@ import type {
 } from "@pawspot/api-contracts";
 
 export const useUserStore = defineStore("user", () => {
-    const users = ref<UsersListResponse>([]);
     const user = ref<UserResponse | null>(null);
-    const searchResult = ref<PaginatedResponse<UserResponse> | null>(null);
+    const searchResult = ref<PaginatedResponse<UserResponse>>({
+        items: [],
+        total: 0,
+        page: 1,
+        limit: 10,
+        totalPages: 1,
+    });
     const isLoading = ref(false);
     const error = ref<string | null>(null);
-
-    function setUsers(newUsers: UsersListResponse) {
-        users.value = newUsers;
-    }
+    const lastQuery = ref<string | null>(null);
 
     function setUser(newUser: UserResponse | null) {
         user.value = newUser;
     }
 
-    function setSearchResult(newResult: PaginatedResponse<UserResponse> | null) {
+    function setSearchResult(newResult: PaginatedResponse<UserResponse>) {
         searchResult.value = newResult;
     }
 
@@ -51,7 +52,7 @@ export const useUserStore = defineStore("user", () => {
             const res = await api.createUser(payload);
             const data = res?.data?.value;
             if (data) {
-                users.value = [data, ...users.value];
+                searchResult.value = { ...searchResult.value, items: [data, ...searchResult?.value.items] };
             }
             return data ?? null;
         } catch (e: any) {
@@ -70,7 +71,10 @@ export const useUserStore = defineStore("user", () => {
             const res = await api.updateUser(id, payload);
             const data = res?.data?.value;
             if (data) {
-                users.value = users.value.map((u) => (u.id === data.id ? data : u));
+                searchResult.value = {
+                    ...searchResult.value,
+                    items: searchResult.value.items.map((u) => (u.id === data.id ? data : u)),
+                };
                 if (user.value?.id === data.id) user.value = data;
             }
             return data ?? null;
@@ -88,7 +92,10 @@ export const useUserStore = defineStore("user", () => {
         try {
             const api = useUserApi();
             await api.deleteUser(id);
-            users.value = users.value.filter((u) => u.id !== id);
+            searchResult.value = {
+                ...searchResult.value,
+                items: searchResult.value.items.filter((u) => u.id !== id),
+            };
             if (user.value?.id === id) user.value = null;
             return true;
         } catch (e: any) {
@@ -100,14 +107,21 @@ export const useUserStore = defineStore("user", () => {
     }
 
     async function searchUsers(query: QueryOptions<UserResponse>) {
+        const queryString = JSON.stringify(query);
+        if (queryString === lastQuery.value) {
+            return searchResult.value;
+        }
+
         isLoading.value = true;
         error.value = null;
+        lastQuery.value = queryString;
+
         try {
             const api = useUserApi();
-            const res = await api.searchUsers(query);
-            const data = res?.data?.value ?? null;
-            setSearchResult(data);
-            setUsers(data?.items ?? []);
+            const data = await api.searchUsers(query);
+            if (data) {
+                setSearchResult(data);
+            }
             return data;
         } catch (e: any) {
             error.value = e?.message ?? String(e);
@@ -120,10 +134,8 @@ export const useUserStore = defineStore("user", () => {
     return {
         isLoading,
         error,
-        users,
         user,
         searchResult,
-        setUsers,
         setUser,
         setSearchResult,
         fetchUserById,

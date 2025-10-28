@@ -32,7 +32,7 @@ export const useUserApi = () => {
     };
 
     const searchUsers = async (query: QueryOptions<UserResponse>) => {
-        return await useFetch<PaginatedResponse<UserResponse>>(
+        return await $fetch<PaginatedResponse<UserResponse>>(
             "/api/user/search",
             {
                 method: "POST",
