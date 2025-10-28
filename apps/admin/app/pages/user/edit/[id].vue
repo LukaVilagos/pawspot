@@ -1,5 +1,5 @@
 <template>
     <div>
-        User
+       Edit User
     </div>
 </template>

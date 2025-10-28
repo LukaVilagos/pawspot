@@ -56,8 +56,10 @@
 import type { QueryOptions, SortEntry, FilterEntry, FilterCondition, NestedKeyOf } from '@pawspot/api-contracts'
 import type { TypedTableColumn } from '~/types/table-types'
 import type { TableColumn } from '@nuxt/ui'
+import type { DropdownMenuItem } from '@nuxt/ui'
 
 const UButton = resolveComponent('UButton')
+const TableActions = resolveComponent('TableActions')
 
 type Primitive = string | number | boolean | Date | null | undefined
 
@@ -82,6 +84,9 @@ const props = defineProps<{
   total: number
   page: number
   loadData: (query: QueryOptions<T>) => Promise<void>
+  actionsURLBase: string
+  deleteMethod: (id: string) => Promise<boolean>
+  additionalTableActions?: DropdownMenuItem[][]
   loading?: boolean
 }>()
 
@@ -98,8 +103,29 @@ const isInitializing = ref(true)
 
 const PAGE_SIZE = 10
 
+const actionsColumn: TableColumn<T> = {
+  accessorKey: 'actions',
+  header: 'Actions',
+  meta: {
+    style: {
+      th: 'width: 10%',
+      td: 'width: 10%'
+    }
+  },
+  cell: (info) => {
+    return h(TableActions, {
+      id: info.row.original.id,
+      basePath: props.actionsURLBase,
+      deleteMethod: async () => {
+        await props.deleteMethod(info.row.original.id as string)
+      },
+      additionalItems: props.additionalTableActions
+    })
+  }
+}
+
 const tableColumns = computed<TableColumn<T>[]>(() => {
-  return props.columns.map(col => {
+  const cols: TableColumn<T>[] = props.columns.map(col => {
     const column: TableColumn<T> = {
       accessorKey: col.accessorKey as string,
       cell: col.cell as never,
@@ -132,6 +158,10 @@ const tableColumns = computed<TableColumn<T>[]>(() => {
 
     return column
   })
+
+  cols.push(actionsColumn)
+
+  return cols
 })
 
 const hasActiveFilters = computed(() => columnFilters.value.length > 0)

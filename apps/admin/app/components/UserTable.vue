@@ -8,10 +8,12 @@
       :total="searchResult?.total || 0"
       :page="searchResult?.page || 1"
       :loading="isLoading"
-      @filter-change="onFilterChange"
+      @filter-change="loadUsers"
       :show-filter="true"
       :sticky="true"
       :load-data="loadUsers"
+      :actions-u-r-l-base="URLBase"
+      :delete-method="userStore.deleteUser"
     />
   </div>
 </template>
@@ -24,11 +26,7 @@ const userStore = useUserStore()
 const { searchResult, isLoading } = storeToRefs(userStore)
 
 const tableKey = computed(() => generateTableKey(searchResult.value))
-
-
-async function onFilterChange(query: QueryOptions<UserResponse>) {
-  await userStore.searchUsers(query)
-}
+const URLBase = '/user'
 
 async function loadUsers(query: QueryOptions<UserResponse>): Promise<void> {
   await userStore.searchUsers(query)
