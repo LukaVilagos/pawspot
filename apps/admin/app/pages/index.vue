@@ -1,5 +1,5 @@
 <template>
-    <div>
-        ADMIN DASHBOARD
-    </div>
+    <UPage>
+        <UPageHeader title="Admin Dashboard" />
+    </UPage>
 </template>

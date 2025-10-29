@@ -8,7 +8,7 @@ export default defineEventHandler(
 
         return await protectedServerFetch<typeof UserAdminContract.update.response>(
             event,
-            `/admin${UserAdminContract.update.build({ id })}`,
+            `${UserAdminContract.update.build({ id })}`,
             {
                 method: UserAdminContract.update.method,
                 body,

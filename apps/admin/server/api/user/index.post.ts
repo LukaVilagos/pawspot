@@ -7,7 +7,7 @@ export default defineEventHandler(
 
         return await protectedServerFetch<typeof UserAdminContract.create.response>(
             event,
-            `/admin${UserAdminContract.create.build()}`,
+            `${UserAdminContract.create.build()}`,
             {
                 method: UserAdminContract.create.method,
                 body,

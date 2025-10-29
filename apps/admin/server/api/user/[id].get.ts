@@ -6,7 +6,7 @@ export default defineEventHandler(
 
         return await protectedServerFetch<typeof UserAdminContract.getById.response>(
             event,
-            `/admin${UserAdminContract.getById.build({ id })}`,
+            `${UserAdminContract.getById.build({ id })}`,
             {
                 method: UserAdminContract.getById.method,
             }

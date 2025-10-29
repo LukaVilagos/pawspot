@@ -7,7 +7,7 @@ export default defineEventHandler(
 
         return await protectedServerFetch<typeof UserAdminContract.search.response>(
             event,
-            `/admin${UserAdminContract.search.build()}`,
+            `${UserAdminContract.search.build()}`,
             {
                 method: UserAdminContract.search.method,
                 body,
