@@ -11,7 +11,7 @@ export type FilterInputType =
 
 export interface FilterOption {
     label: string;
-    value: string | number | boolean;
+    value: string;
 }
 
 export interface FilterConfig {

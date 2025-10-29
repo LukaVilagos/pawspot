@@ -1,5 +1,3 @@
 <template>
-    <div class="p-4">
-        <UserTable />
-    </div>
+    <UserTable />
 </template>

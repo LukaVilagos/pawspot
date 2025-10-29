@@ -1,8 +1,8 @@
 <template>
-  <div class="grid grid-cols-[200px_1fr] min-h-screen">
+  <UDashboardGroup>
     <SideBar />
-    <div class="p-4">
+    <UContainer class="py-4">
       <slot />
-    </div>
-  </div>
+    </UContainer>
+  </UDashboardGroup>
 </template>

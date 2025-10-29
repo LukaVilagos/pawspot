@@ -1,36 +1,26 @@
 <template>
-    <Edit 
-      :item="user ?? ({} as Record<string, any>)"
-      :fields="items"
-      :loading="userStore.isLoading"
-      :error="userStore.error"
-      @saved="onSaved"
-      @cancel="onCancel"
-    />
+    <Edit :item="user ?? {}" :fields="items" :schema="EditUserSchema" :saveFn="saveUser" redirect-to="/user"
+        entity-name="User" />
 </template>
 
 <script setup lang="ts">
-import type { UserResponse } from '@pawspot/api-contracts';
-import type { EditPageItem } from '~/components/Edit.vue';
+import type { UserResponse } from '@pawspot/api-contracts'
+import type { PageItem } from '~/types/PageItem'
+import { EditUserSchema } from '~/utils/validation/user'
 
-const route = useRoute();
-const userStore = useUserStore();
-const { user } = storeToRefs(userStore);
-const router = useRouter();
+const route = useRoute()
+const userStore = useUserStore()
+const { user } = storeToRefs(userStore)
 
-await userStore.fetchUserById(String(route.params.id));
+await userStore.fetchUserById(String(route.params.id))
 
-const onSaved = (payload: any) => {
-    userStore.updateUser(String(user?.value?.id), payload);
-    router.push('/user');
-};
+const saveUser = async (id: string | number | undefined, payload: Record<string, any>) => {
+    if (!id) throw { message: 'Missing id' }
+    await userStore.updateUser(String(id), payload)
+}
 
-const onCancel = () => {
-    router.push('/user');
-};
-
-const items: EditPageItem<UserResponse>[] = [
+const items: PageItem<UserResponse>[] = [
     { accessorKey: 'email', header: 'Email', type: 'text' },
     { accessorKey: 'name', header: 'Name', type: 'text' },
-];
+]
 </script>

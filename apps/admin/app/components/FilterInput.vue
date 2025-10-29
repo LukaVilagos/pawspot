@@ -1,74 +1,18 @@
 <template>
   <div class="flex flex-col gap-1 min-w-[180px]">
-    <label class="text-xs font-medium">{{ label }}</label>
-    <div class="flex items-center gap-1">
-      <template v-if="filterConfig.type === 'range'">
-        <UInput
-          v-model="rangeFrom"
-          type="date"
-          size="sm"
-          placeholder="From"
-        />
-        <UInput
-          v-model="rangeTo"
-          type="date"
-          size="sm"
-          placeholder="To"
-        />
-      </template>
-
-      <template v-else-if="filterConfig.type === 'select'">
-        <USelect
-          v-model="value"
-          :options="selectOptions"
-          size="sm"
-          placeholder="Select..."
-        />
-      </template>
-
-      <template v-else-if="filterConfig.type === 'boolean'">
-        <UCheckbox v-model="boolValue" />
-      </template>
-
-      <template v-else-if="filterConfig.type === 'number'">
-        <UInput
-          v-model.number="value"
-          type="number"
-          size="sm"
-          placeholder="Enter number"
-        />
-      </template>
-
-      <template v-else-if="filterConfig.type === 'date'">
-        <UInput
-          v-model="value"
-          type="date"
-          size="sm"
-        />
-      </template>
-
-      <template v-else>
-        <UInput
-          v-model="value"
-          type="text"
-          size="sm"
-          placeholder="Enter text"
-        />
-      </template>
-    </div>
+    <CustomizableInput :label="label" :type="filterConfig.type" v-model="inputModel" :options="selectOptions"
+      :subTypeFrom="filterConfig.type === 'range' ? 'date' : undefined"
+      :subTypeTo="filterConfig.type === 'range' ? 'date' : undefined" :placeholder="`Filter by ${label} ...`" />
   </div>
 </template>
 
 <script setup lang="ts">
 import type { FilterConfig, FilterOption } from '~/types/table-types'
 import type { FilterCondition, FilterOperator } from '@pawspot/api-contracts'
+import CustomizableInput from '~/components/CustomizableInput.vue'
+import { toRaw } from 'vue'
 
 type FilterOutput = FilterCondition | null
-
-interface SelectOption {
-  label: string
-  value: string | number | boolean
-}
 
 const props = defineProps<{
   filterConfig: FilterConfig
@@ -84,11 +28,8 @@ const emit = defineEmits<{
 const getOperatorForType = (type: string): FilterOperator => {
   switch (type) {
     case 'number':
-      return 'eq'
     case 'date':
-      return 'eq'
     case 'boolean':
-      return 'eq'
     case 'select':
       return 'eq'
     case 'range':
@@ -98,13 +39,17 @@ const getOperatorForType = (type: string): FilterOperator => {
       return 'contains'
   }
 }
-
 const op = computed<FilterOperator>(() => getOperatorForType(props.filterConfig.type))
+
 const value = ref<string | number>('')
 const boolValue = ref<boolean>(false)
-
 const rangeFrom = ref<string>('')
 const rangeTo = ref<string>('')
+
+interface SelectOption {
+  label: string
+  value: string
+}
 
 const selectOptions = computed<SelectOption[]>(() => {
   const opts: FilterOption[] = props.filterConfig.options ?? []
@@ -135,12 +80,42 @@ watch(() => props.modelValue, (newValue) => {
   }
 }, { immediate: true })
 
+
+const inputModel = computed({
+  get() {
+    const t = props.filterConfig.type
+    if (t === 'range') {
+      return [rangeFrom.value || null, rangeTo.value || null]
+    }
+    if (t === 'boolean') return boolValue.value
+    return value.value
+  },
+  set(v: any) {
+    const t = props.filterConfig.type
+    if (t === 'range') {
+      if (Array.isArray(v)) {
+        rangeFrom.value = v[0] == null ? '' : String(v[0])
+        rangeTo.value = v[1] == null ? '' : String(v[1])
+      } else {
+        rangeFrom.value = ''
+        rangeTo.value = ''
+      }
+    } else if (t === 'boolean') {
+      boolValue.value = Boolean(v)
+    } else {
+      value.value = v ?? ''
+    }
+  }
+})
+
 watch([op, value, boolValue, rangeFrom, rangeTo], () => {
   let output: FilterOutput = null
 
   if (op.value === 'between') {
     if (rangeFrom.value && rangeTo.value) {
       output = { op: 'between', value: [rangeFrom.value, rangeTo.value] }
+    } else {
+      output = null
     }
   } else if (props.filterConfig.type === 'boolean') {
     output = { op: op.value, value: boolValue.value }
@@ -148,19 +123,25 @@ watch([op, value, boolValue, rangeFrom, rangeTo], () => {
     const num = typeof value.value === 'number' ? value.value : Number(value.value)
     if (!isNaN(num) && value.value !== '') {
       output = { op: op.value, value: num }
+    } else {
+      output = null
     }
   } else if (props.filterConfig.type === 'date') {
     const dateStr = String(value.value)
     if (dateStr && dateStr !== '') {
       output = { op: op.value, value: dateStr }
+    } else {
+      output = null
     }
   } else {
     const textValue = String(value.value)
     if (textValue && textValue !== '') {
       output = { op: op.value, value: textValue }
+    } else {
+      output = null
     }
   }
 
-  emit('update', output)
+  emit('update', toRaw(output))
 }, { deep: true })
 </script>

@@ -1,20 +1,9 @@
 <template>
   <div class="w-full">
-    <Table
-      :key="tableKey"
-      :data="searchResult?.items || []"
-      :columns="columns"
-      :page-size="searchResult?.limit || 10"
-      :total="searchResult?.total || 0"
-      :page="searchResult?.page || 1"
-      :loading="isLoading"
-      @filter-change="loadUsers"
-      :show-filter="true"
-      :sticky="true"
-      :load-data="loadUsers"
-      :actions-u-r-l-base="URLBase"
-      :delete-method="userStore.deleteUser"
-    />
+    <Table :key="tableKey" :data="searchResult?.items || []" :columns="columns" :page-size="searchResult?.limit || 10"
+      :total="searchResult?.total || 0" :page="searchResult?.page || 1" :loading="isLoading" @filter-change="loadUsers"
+      :show-filter="true" :sticky="true" :load-data="loadUsers" :actions-u-r-l-base="URLBase"
+      :delete-method="userStore.deleteUser" entityName="User" />
   </div>
 </template>
 

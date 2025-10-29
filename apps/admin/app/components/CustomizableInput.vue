@@ -13,7 +13,7 @@
       </template>
 
       <template v-else-if="type === 'select'">
-        <USelect v-model="innerValue" :options="options" size="sm" />
+        <USelect v-model="innerValue" :options="options" size="sm" :placeholder="placeholder" />
       </template>
 
       <template v-else-if="type === 'boolean'">
@@ -21,15 +21,15 @@
       </template>
 
       <template v-else-if="type === 'number'">
-        <UInput v-model.number="innerValue" type="number" size="sm" />
+        <UInput v-model.number="innerValue" type="number" size="sm" :placeholder="placeholder" />
       </template>
 
       <template v-else-if="type === 'date'">
-        <UInput v-model="innerValue" type="date" size="sm" />
+        <UInput v-model="innerValue" type="date" size="sm" :placeholder="placeholder" />
       </template>
 
       <template v-else>
-        <UInput v-model="innerValue" type="text" size="sm" />
+        <UInput v-model="innerValue" type="text" size="sm" :placeholder="placeholder" />
       </template>
     </template>
   </UFormField>
@@ -47,6 +47,7 @@ const props = defineProps<{
   componentProps?: Record<string, any>
   subTypeFrom?: string
   subTypeTo?: string
+  placeholder?: string
 }>()
 
 const emit = defineEmits<{

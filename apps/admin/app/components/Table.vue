@@ -1,54 +1,30 @@
 <template>
-  <div class="flex flex-col w-full">
-    <div v-if="showFilter" class="flex gap-2 items-center px-4 py-2.5 border-b border-accented overflow-x-auto">
-      <div class="flex gap-2 flex-1">
-        <template v-for="col in columns" :key="col.accessorKey">
-          <FilterInput
-            v-if="col.filter"
-            :filter-config="col.filter"
-            :label="col.header"
-            :field="col.accessorKey"
-            :model-value="getFilterValueFromURL(col.accessorKey)"
-            @update="(value: FilterValue) => setFilterValue(col.accessorKey, value)"
-          />
-        </template>
+  <UPage>
+    <UPageHeader headline="User Management" :title="entityName" description="Manage your users" />
+    <UPageBody>
+      <div>
+        <div v-if="showFilter" class="flex gap-2 items-center px-4 py-2.5 border-b border-accented overflow-x-auto">
+          <div class="flex gap-2 flex-1">
+            <template v-for="col in columns" :key="col.accessorKey">
+              <FilterInput v-if="col.filter" :filter-config="col.filter" :label="col.header" :field="col.accessorKey"
+                :model-value="getFilterValueFromURL(col.accessorKey)"
+                @update="(value: FilterValue) => setFilterValue(col.accessorKey, value)" />
+            </template>
+          </div>
+          <UButton v-if="hasActiveFilters" color="neutral" variant="outline" label="Clear Filters" icon="i-lucide-x"
+            @click="clearAllFilters" />
+          <UButton v-if="hasActiveSorting" color="neutral" variant="outline" label="Clear Sorting" icon="i-lucide-x"
+            @click="clearAllSorting" />
+        </div>
+        <UTable ref="table" :data="data" :columns="tableColumns" :sticky="sticky" :loading="loading"
+          class="flex-1 w-full" :ui="{ base: 'table-fixed' }" />
+        <div class="flex flex-row justify-center">
+          <UPagination class="mt-4 self-center" :total="total" :page="page" :items-per-page="pageSize"
+            @update:page="handlePageChange" />
+        </div>
       </div>
-      <UButton
-        v-if="hasActiveFilters"
-        color="neutral"
-        variant="outline"
-        label="Clear Filters"
-        icon="i-lucide-x"
-        @click="clearAllFilters"
-      />
-      <UButton
-        v-if="hasActiveSorting"
-        color="neutral"
-        variant="outline"
-        label="Clear Sorting"
-        icon="i-lucide-x"
-        @click="clearAllSorting"
-    />
-    </div>
-
-    <UTable
-      ref="table"
-      :data="data"
-      :columns="tableColumns"
-      :sticky="sticky"
-      :loading="loading"
-      class="flex-1 w-full"
-      :ui="{ base: 'table-fixed' }"
-    />
-
-    <UPagination
-      class="mt-4 self-center"
-      :total="total"
-      :page="page"
-      :items-per-page="pageSize"
-      @update:page="handlePageChange"
-    />
-  </div>
+    </UPageBody>
+  </UPage>
 </template>
 
 
@@ -83,6 +59,7 @@ const props = defineProps<{
   sticky: boolean
   total: number
   page: number
+  entityName: string
   loadData: (query: QueryOptions<T>) => Promise<void>
   actionsURLBase: string
   deleteMethod: (id: string) => Promise<boolean>
@@ -193,9 +170,9 @@ onMounted(() => {
 
 onMounted(async () => {
   const hasUrlParams = route.query.filters || route.query.sort || route.query.page
-  
+
   if (!hasUrlParams && !props.data.length) {
-    await props.loadData({ page: 1, limit: PAGE_SIZE})
+    await props.loadData({ page: 1, limit: PAGE_SIZE })
   }
 })
 
@@ -296,7 +273,7 @@ function buildFilterPayload(): QueryOptions<T> {
     key: s.id as NestedKeyOf<T>,
     order: s.desc ? 'desc' : 'asc'
   }))
-  
+
   if (sort.length > 0) {
     q.sort = sort
   }
