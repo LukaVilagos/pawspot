@@ -1,0 +1,16 @@
+meta {
+  name: admin
+  seq: 3
+}
+
+auth {
+  mode: bearer
+}
+
+auth:bearer {
+  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImpvaG4uZG9lKzIyQGV4YW1wbGUuY29tIiwiaWQiOiJjbWg3c2NqeWMwMDAwYnN5YzBqMGtudWltIiwidHlwZSI6IkFETUlOIiwiaWF0IjoxNzYxNzY1MDE5LCJleHAiOjE3NjE3Njg2MTl9.4a7mujPXh5Fs1Da3G5tYHK2phuVYUiGcPZJl_vGFf4w
+}
+
+vars:pre-request {
+  apiUrl: http://localhost:3000/admin
+}

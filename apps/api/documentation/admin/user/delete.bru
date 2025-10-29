@@ -1,11 +1,11 @@
 meta {
-  name: getAll
+  name: delete
   type: http
   seq: 1
 }
 
-get {
-  url: {{apiUrl}}/user
+delete {
+  url: {{apiUrl}}/{{root}}/{{userId}}
   body: none
   auth: inherit
 }

@@ -5,18 +5,21 @@ import {
   UsersListResponseDto,
 } from '@pawspot/api-contracts';
 import { UserService } from '../services/user.service';
-import { AuthGuard } from '@nestjs/passport';
+import { AuthGuard } from 'src/modules/auth/guards/auth.guard';
+import { ZodSerializerDto } from 'nestjs-zod';
 
 @Controller(USER_ROUTES.ROOT)
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(private readonly userService: UserService) { }
 
+  @ZodSerializerDto(UsersListResponseDto)
   @Get()
   async getUser(): Promise<UsersListResponseDto> {
     return this.userService.getUser();
   }
 
-  @UseGuards(AuthGuard('jwt'))
+  @ZodSerializerDto(UserResponseDto)
+  @UseGuards(AuthGuard)
   @Get(USER_ROUTES.BY_ID)
   async getUserById(@Param('id') id: string): Promise<UserResponseDto> {
     return this.userService.getUserById(id);

@@ -1,6 +1,15 @@
+export const ADMIN_USER_ROUTES = {
+    ROOT: '/admin/user',
+    BY_ID: ':id',
+    CREATE: '',
+    UPDATE: ':id',
+    DELETE: ':id',
+    SEARCH: 'search',
+} as const;
+
 export const USER_ROUTES = {
     ROOT: '/user',
     BY_ID: ':id',
 } as const;
 
-export type UserRoutes = typeof USER_ROUTES;
+export type AdminUserRoutes = typeof ADMIN_USER_ROUTES;

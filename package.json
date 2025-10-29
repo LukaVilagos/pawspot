@@ -6,7 +6,8 @@
   "scripts": {
     "start:web": "pnpm --filter web dev",
     "start:api": "pnpm --filter api start:dev",
-    "start": "pnpm run start:web & pnpm run start:api",
+    "start:admin": "pnpm --filter admin dev",
+    "start": "pnpm run start:web & pnpm run start:api & pnpm run start:admin",
     "build": "pnpm recursive run build",
     "test": "pnpm recursive run test",
     "db:up": "docker-compose up -d postgres",

@@ -3,12 +3,14 @@ import { AuthService } from '../services/auth.service';
 import { AuthGuard } from '@nestjs/passport';
 import { AUTH_ROUTES, LoginResponseDto, RegisterRequestDto, RegisterResponseDto } from '@pawspot/api-contracts';
 import { Public } from '../decorators/public.decorator';
+import { ZodSerializerDto } from 'nestjs-zod';
 
 @Public()
 @Controller(AUTH_ROUTES.ROOT)
 export class AuthController {
     constructor(private authService: AuthService) { }
 
+    @ZodSerializerDto(LoginResponseDto)
     @UseGuards(AuthGuard('local'))
     @Post(AUTH_ROUTES.LOGIN)
     async login(@Request() req): Promise<LoginResponseDto | BadRequestException> {
@@ -16,6 +18,7 @@ export class AuthController {
         return response;
     }
 
+    @ZodSerializerDto(RegisterResponseDto)
     @Post(AUTH_ROUTES.REGISTER)
     async register(@Body() registerBody: RegisterRequestDto): Promise<RegisterResponseDto | BadRequestException> {
         return this.authService.register(registerBody);

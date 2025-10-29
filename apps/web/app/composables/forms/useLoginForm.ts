@@ -3,7 +3,7 @@ import { toTypedSchema } from "@vee-validate/zod";
 import { LoginFormSchema } from "~/utils/validation/loginSchema";
 import { useAuth } from "~/composables/useAuth";
 
-export const useLoginForm = () => {
+export const useLoginForm = (isAdmin: boolean = false) => {
   const auth = useAuth();
   const validationSchema = toTypedSchema(LoginFormSchema);
   const { handleSubmit, errors, defineField, isSubmitting } = useForm({
@@ -17,6 +17,11 @@ export const useLoginForm = () => {
       email: values.email,
       password: values.password,
     };
+
+    if (isAdmin) {
+      await auth.loginAdmin(body);
+      return;
+    }
 
     await auth.login(body);
   });

@@ -1,0 +1,24 @@
+meta {
+  name: update
+  type: http
+  seq: 2
+}
+
+put {
+  url: {{apiUrl}}/{{root}}/{{userId}}
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "email": "john.doe+updated+60@example.com",
+    "name": "JohnDoe+Updated+6",
+    "type": "ADMIN"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

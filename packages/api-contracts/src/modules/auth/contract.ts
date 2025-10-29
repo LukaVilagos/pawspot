@@ -1,5 +1,5 @@
 import { LoginResponseDto, LoginUserRequest, RegisterResponseDto, RegisterUserRequest } from "./dtos";
-import { AUTH_ROUTES } from "./routes";
+import { ADMIN_AUTH_ROUTES, AUTH_ROUTES } from "./routes";
 
 export const AuthContract = {
     root: {
@@ -21,6 +21,17 @@ export const AuthContract = {
         response: {} as RegisterResponseDto,
     },
 } as const;
+
+export const AdminAuthContract = {
+    login: {
+        method: 'POST' as const,
+        route: ADMIN_AUTH_ROUTES.LOGIN,
+        build: () => `${ADMIN_AUTH_ROUTES.ROOT}/${ADMIN_AUTH_ROUTES.LOGIN}`,
+        request: {} as LoginUserRequest,
+        response: {} as LoginResponseDto,
+    },
+} as const;
+
 
 
 export type AuthContractType = typeof AuthContract;
