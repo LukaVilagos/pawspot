@@ -1,11 +1,11 @@
 meta {
-  name: getById
+  name: delete
   type: http
   seq: 1
 }
 
-get {
-  url: {{apiUrlAdmin}}{{routeRoot}}/{{adminUserId}}
+delete {
+  url: {{apiUrl}}/{{root}}/{{userId}}
   body: none
   auth: inherit
 }

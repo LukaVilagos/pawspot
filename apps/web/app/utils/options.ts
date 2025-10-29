@@ -1,3 +1,7 @@
-export const enumToOptions = <T extends Record<string, string>>(enumObj: T) => {
-    return Object.values(enumObj).map((value) => ({ label: value, value }));
-}
+import type z from "zod";
+
+export const schemaToOptions = (schema: z.ZodEnum) =>
+    schema.options.map((type) => ({
+        value: String(type),
+        label: String(type)
+    }));

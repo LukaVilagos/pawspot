@@ -1,5 +1,6 @@
-export const USER_ROUTES = {
-    ROOT: '/user',
+export const ADMIN_USER_ROUTES = {
+    NORMAL_ROOT: '/user',
+    ROOT: '/admin/user',
     BY_ID: ':id',
     CREATE: '',
     UPDATE: ':id',
@@ -7,4 +8,4 @@ export const USER_ROUTES = {
     SEARCH: 'search',
 } as const;
 
-export type UserRoutes = typeof USER_ROUTES;
+export type AdminUserRoutes = typeof ADMIN_USER_ROUTES;

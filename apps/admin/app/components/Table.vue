@@ -1,6 +1,6 @@
 <template>
   <UPage>
-    <UPageHeader headline="User Management" :title="entityName" description="Manage your users" />
+    <UPageHeader headline="User Management" :title="entityName" description="Manage your users" :links="headerLinks" />
     <UPageBody>
       <div>
         <div v-if="showFilter" class="flex gap-2 items-center px-4 py-2.5 border-b border-accented overflow-x-auto">
@@ -8,7 +8,7 @@
             <template v-for="col in columns" :key="col.accessorKey">
               <FilterInput v-if="col.filter" :filter-config="col.filter" :label="col.header" :field="col.accessorKey"
                 :id="col.accessorKey" :model-value="getFilterValueFromURL(col.accessorKey)"
-                @update="(value: FilterValue) => setFilterValue(col.accessorKey, value)" />
+                @update="(value: FilterValue) => setFilterValue(col.accessorKey, value)" size="sm" />
             </template>
           </div>
           <UButton v-if="hasActiveFilters" color="neutral" variant="outline" label="Clear Filters" icon="i-lucide-x"
@@ -33,8 +33,7 @@
 <script setup lang="ts" generic="T extends Record<string, unknown>">
 import type { QueryOptions, SortEntry, FilterEntry, FilterCondition, NestedKeyOf } from '@pawspot/api-contracts'
 import type { TypedTableColumn } from '~/types/table-types'
-import type { TableColumn } from '@nuxt/ui'
-import type { DropdownMenuItem } from '@nuxt/ui'
+import type { DropdownMenuItem, ButtonProps, TableColumn } from '@nuxt/ui'
 
 const UButton = resolveComponent('UButton')
 const TableActions = resolveComponent('TableActions')
@@ -84,6 +83,17 @@ const showDelete = ref(false)
 const selectedDeleteId = ref<string | null>(null)
 
 const PAGE_SIZE = 10
+
+const headerLinks = ref<ButtonProps[]>([
+  {
+    label: 'Create',
+    icon: 'mdi-plus',
+    color: 'primary',
+    onClick: () => {
+      router.push(`${props.actionsURLBase}/create`)
+    },
+  },
+])
 
 const actionsColumn: TableColumn<T> = {
   accessorKey: 'actions',

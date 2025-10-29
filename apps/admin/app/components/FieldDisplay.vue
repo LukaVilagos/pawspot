@@ -11,6 +11,9 @@
             <template v-else-if="field.type === 'date'">
                 {{ formattedDate }}
             </template>
+            <template v-else-if="field.type === 'password'">
+                ********
+            </template>
             <template v-else>
                 {{ value }}
             </template>

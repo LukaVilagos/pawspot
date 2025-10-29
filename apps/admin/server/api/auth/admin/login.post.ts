@@ -1,14 +1,14 @@
-import { AuthContract } from "@pawspot/api-contracts";
+import { AdminAuthContract } from "@pawspot/api-contracts";
 
 export default defineEventHandler(
-    async (event): Promise<typeof AuthContract.adminLogin.response> => {
-        type BodyType = typeof AuthContract.adminLogin.request;
+    async (event): Promise<typeof AdminAuthContract.login.response> => {
+        type BodyType = typeof AdminAuthContract.login.request;
         const body: BodyType = await readBody(event);
 
         const response = await publicServerFetch<
-            typeof AuthContract.adminLogin.response
-        >(event, AuthContract.adminLogin.build(), {
-            method: AuthContract.adminLogin.method,
+            typeof AdminAuthContract.login.response
+        >(event, AdminAuthContract.login.build(), {
+            method: AdminAuthContract.login.method,
             body,
         });
 

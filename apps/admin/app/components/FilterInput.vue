@@ -2,7 +2,8 @@
   <div class="flex flex-col gap-1 min-w-[180px]">
     <CustomizableInput :label="label" :type="filterConfig.type" v-model="inputModel" :options="selectOptions"
       :subTypeFrom="filterConfig.type === 'range' ? 'date' : undefined"
-      :subTypeTo="filterConfig.type === 'range' ? 'date' : undefined" :placeholder="`Filter by ${label} ...`" />
+      :subTypeTo="filterConfig.type === 'range' ? 'date' : undefined" :placeholder="`Filter by ${label} ...`"
+      :size="size" />
   </div>
 </template>
 
@@ -19,6 +20,7 @@ const props = defineProps<{
   field: string
   label: string
   modelValue?: FilterOutput
+  size?: "sm" | "md" | "lg" | "xs" | "xl"
 }>()
 
 const emit = defineEmits<{

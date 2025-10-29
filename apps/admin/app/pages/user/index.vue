@@ -6,8 +6,9 @@
 </template>
 
 <script setup lang="ts">
-import { type UserResponse, type QueryOptions, UserType } from '@pawspot/api-contracts'
+import { type UserResponse, type QueryOptions, type UserType, UserTypeSchema } from '@pawspot/api-contracts'
 import type { TypedTableColumn } from '~/types/table-types'
+import { schemaToOptions } from '../../../../web/app/utils/options'
 
 const userStore = useUserStore()
 const { searchResult, isLoading } = storeToRefs(userStore)
@@ -60,7 +61,7 @@ const columns: TypedTableColumn<UserResponse>[] = [
         accessorKey: 'type',
         header: 'Type',
         sortable: true,
-        filter: { type: 'select', options: enumToOptions(UserType) },
+        filter: { type: 'select', options: schemaToOptions(UserTypeSchema) },
         meta: {
             style: {
                 th: 'width: 10%',

@@ -1,11 +1,11 @@
 meta {
   name: update
   type: http
-  seq: 3
+  seq: 2
 }
 
 put {
-  url: {{apiUrlAdmin}}{{routeRoot}}/{{adminUserId}}
+  url: {{apiUrl}}/{{root}}/{{userId}}
   body: json
   auth: inherit
 }

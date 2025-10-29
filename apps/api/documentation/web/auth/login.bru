@@ -1,19 +1,19 @@
 meta {
-  name: search
+  name: login
   type: http
-  seq: 5
+  seq: 1
 }
 
 post {
-  url: {{apiUrlAdmin}}{{routeRoot}}/search
+  url: {{apiUrl}}/{{root}}/login
   body: json
   auth: inherit
 }
 
 body:json {
   {
-    "limit": 2,
-    "page": 3
+    "email": "john.doe+2@example.com",
+    "password": "JohnDoe123"
   }
 }
 

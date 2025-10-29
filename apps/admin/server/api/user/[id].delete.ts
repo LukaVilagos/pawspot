@@ -1,9 +1,9 @@
-import { UserContract } from "@pawspot/api-contracts";
+import { UserAdminContract } from "@pawspot/api-contracts";
 
 export default defineEventHandler(async (event) => {
     const { id } = (event.context?.params ?? {}) as { id: string };
 
-    return await protectedServerFetch(event, `/admin${UserContract.delete.build({ id })}`, {
-        method: UserContract.delete.method,
+    return await protectedServerFetch(event, `/admin${UserAdminContract.delete.build({ id })}`, {
+        method: UserAdminContract.delete.method,
     });
 });

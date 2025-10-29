@@ -7,13 +7,13 @@
     <template v-else>
       <template v-if="type === 'range'">
         <div class="flex gap-2">
-          <UInput v-model="rangeFrom" :type="subTypeFrom || 'text'" size="sm" placeholder="From" />
-          <UInput v-model="rangeTo" :type="subTypeTo || 'text'" size="sm" placeholder="To" />
+          <UInput v-model="rangeFrom" :type="subTypeFrom || 'text'" :size="size" placeholder="From" />
+          <UInput v-model="rangeTo" :type="subTypeTo || 'text'" :size="size" placeholder="To" />
         </div>
       </template>
 
       <template v-else-if="type === 'select'">
-        <USelect v-model="innerValue" :items="options" size="sm" :placeholder="placeholder" />
+        <USelect v-model="innerValue" :items="options" :size="size" :placeholder="placeholder" />
       </template>
 
       <template v-else-if="type === 'boolean'">
@@ -21,15 +21,19 @@
       </template>
 
       <template v-else-if="type === 'number'">
-        <UInput v-model.number="innerValue" type="number" size="sm" :placeholder="placeholder" />
+        <UInput v-model.number="innerValue" type="number" :size="size" :placeholder="placeholder" />
       </template>
 
       <template v-else-if="type === 'date'">
-        <UInput v-model="innerValue" type="date" size="sm" :placeholder="placeholder" />
+        <UInput v-model="innerValue" type="date" :size="size" :placeholder="placeholder" />
+      </template>
+
+      <template v-else-if="type === 'password'">
+        <UInput v-model="innerValue" type="password" :size="size" :placeholder="placeholder" />
       </template>
 
       <template v-else>
-        <UInput v-model="innerValue" type="text" size="sm" :placeholder="placeholder" />
+        <UInput v-model="innerValue" type="text" :size="size" :placeholder="placeholder" />
       </template>
     </template>
   </UFormField>
@@ -43,11 +47,13 @@ const props = defineProps<{
   modelValue: any
   type?: InputType
   options?: SelectOption[]
+  useDefaultOption?: boolean
   customComponent?: any
   componentProps?: Record<string, any>
   subTypeFrom?: string
   subTypeTo?: string
   placeholder?: string
+  size?: "sm" | "md" | "lg" | "xs" | "xl"
 }>()
 
 const emit = defineEmits<{

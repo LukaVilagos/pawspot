@@ -1,16 +1,16 @@
-import { UserContract } from "@pawspot/api-contracts";
+import { UserAdminContract } from "@pawspot/api-contracts";
 
 export default defineEventHandler(
-    async (event): Promise<typeof UserContract.update.response> => {
+    async (event): Promise<typeof UserAdminContract.update.response> => {
         const { id } = (event.context?.params ?? {}) as { id: string };
-        type BodyType = typeof UserContract.update.request;
+        type BodyType = typeof UserAdminContract.update.request;
         const body: BodyType = await readBody(event);
 
-        return await protectedServerFetch<typeof UserContract.update.response>(
+        return await protectedServerFetch<typeof UserAdminContract.update.response>(
             event,
-            `/admin${UserContract.update.build({ id })}`,
+            `/admin${UserAdminContract.update.build({ id })}`,
             {
-                method: UserContract.update.method,
+                method: UserAdminContract.update.method,
                 body,
             }
         );

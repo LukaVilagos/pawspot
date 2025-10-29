@@ -7,7 +7,8 @@ export type InputType =
     | 'date'
     | 'datetime'
     | 'select'
-    | 'range';
+    | 'range'
+    | 'password';
 
 export interface SelectOption {
     label: string;

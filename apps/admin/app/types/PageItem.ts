@@ -7,4 +7,5 @@ export type PageItem<T> = {
     options?: { label: string; value: any }[]
     component?: any
     componentProps?: Record<string, any>
+    useDefaultOption?: boolean
 }

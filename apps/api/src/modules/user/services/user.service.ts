@@ -3,6 +3,7 @@ import { CreateUserRequestDto, PaginatedResponse, QueryOptionsDto, UserResponseD
 import { User } from '@pawspot/db';
 import { PrismaService } from 'src/modules/prisma/services/prisma.service';
 import { SearchService } from 'src/modules/prisma/services/search.service';
+import * as bcrypt from 'bcrypt';
 
 
 @Injectable()
@@ -39,6 +40,9 @@ export class UserService {
   }
 
   async createUser(user: CreateUserRequestDto): Promise<UserResponseDto> {
+    const hashedPassword = await bcrypt.hash(user.password, 10);
+    user.password = hashedPassword;
+
     return this.prisma.client.user.create({
       data: user,
       omit: { password: true },

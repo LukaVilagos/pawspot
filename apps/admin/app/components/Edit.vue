@@ -44,7 +44,7 @@ const emit = defineEmits<{
 const router = useRouter()
 
 const validationSchema = toTypedSchema(props.schema)
-const { handleSubmit, errors, isSubmitting, defineField, setFieldError, setErrors } = useForm({
+const { handleSubmit, errors, defineField, setFieldError, setErrors } = useForm({
 	validationSchema,
 	initialValues: props.item,
 })
