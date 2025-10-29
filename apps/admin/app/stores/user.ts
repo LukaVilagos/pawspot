@@ -76,8 +76,10 @@ export const useUserStore = defineStore("user", () => {
                     items: searchResult.value.items.map((u) => (u.id === data.id ? data : u)),
                 };
                 if (user.value?.id === data.id) user.value = data;
+            } else {
+                throw new Error("No data returned from API");
             }
-            return data ?? null;
+            return data;
         } catch (e: any) {
             error.value = e?.message ?? String(e);
             return null;

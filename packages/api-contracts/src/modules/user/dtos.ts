@@ -17,7 +17,6 @@ export const CreateUserRequestSchema = z.object({
 
 export const UpdateUserRequestSchema = z.object({
   email: z.email().optional(),
-  password: z.string().min(6).optional(),
   name: z.string().nullable().optional(),
   type: UserTypeSchema.optional(),
 });
