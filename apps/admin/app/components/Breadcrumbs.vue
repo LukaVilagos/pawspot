@@ -1,12 +1,8 @@
 <template>
-    <div class="mb-4">
-        <UBreadcrumb :items="items" separator-icon="i-lucide-chevron-right" />
-    </div>
+    <UBreadcrumb :items="items" separator-icon="i-lucide-chevron-right" />
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-import { useRoute } from 'vue-router'
 import type { BreadcrumbItem } from '@nuxt/ui'
 
 const route = useRoute()

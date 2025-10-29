@@ -7,7 +7,7 @@
 </template>
 
 <script setup lang="ts">
-import type { FilterConfig, FilterOption, InputType } from '~/types/table-types'
+import type { FilterConfig, SelectOption, InputType } from '~/types/table-types'
 import type { FilterCondition, FilterOperator } from '@pawspot/api-contracts'
 import CustomizableInput from '~/components/CustomizableInput.vue'
 import { toRaw } from 'vue'
@@ -46,17 +46,11 @@ const boolValue = ref<boolean>(false)
 const rangeFrom = ref<string>('')
 const rangeTo = ref<string>('')
 
-interface SelectOption {
-  label: string
-  value: string
-}
-
 const selectOptions = computed<SelectOption[]>(() => {
-  const opts: FilterOption[] = props.filterConfig.options ?? []
-  return [
-    { label: '—', value: '' },
-    ...opts.map(o => ({ label: o.label, value: o.value }))
-  ]
+  if (props.filterConfig.type !== 'select') {
+    return []
+  }
+  return props.filterConfig.options ?? []
 })
 
 watch(() => props.modelValue, (newValue) => {

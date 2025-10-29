@@ -8,7 +8,7 @@ import type {
 
 export const useUserApi = () => {
     const getUserById = async (id: string) => {
-        return await $fetch<UserResponse>(`/api/user/${id}`);
+        return await useFetch<UserResponse>(`/api/user/${id}`);
     };
 
     const createUser = async (payload: CreateUserRequest) => {

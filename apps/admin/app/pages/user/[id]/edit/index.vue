@@ -4,9 +4,9 @@
 </template>
 
 <script setup lang="ts">
-import { UserTypeSchema, type UserResponse } from '@pawspot/api-contracts'
+import { UserType, type UserResponse } from '@pawspot/api-contracts'
 import type { PageItem } from '~/types/PageItem'
-import { EditUserSchema } from '~/utils/validation/user'
+import { EditUserSchema } from '~/utils/validation/userSchemas'
 
 const route = useRoute()
 const userStore = useUserStore()
@@ -22,6 +22,6 @@ const saveUser = async (id: string | number | undefined, payload: Record<string,
 const items: PageItem<UserResponse>[] = [
     { accessorKey: 'email', header: 'Email', type: 'text' },
     { accessorKey: 'name', header: 'Name', type: 'text' },
-    { accessorKey: "type", header: "Type", type: "select", options: UserTypeSchema.options.map(o => { return { label: o, value: o } }) }
+    { accessorKey: "type", header: "Type", type: "select", options: Object.values(UserType).map((value) => ({ label: value, value })) }
 ]
 </script>

@@ -33,7 +33,8 @@ export const useUserStore = defineStore('user', () => {
         error.value = null
         try {
             const api = useUserApi()
-            const data = await api.getUserById(id)
+            const res = await api.getUserById(id)
+            const data = res.data.value
             setUser(data ?? null)
             return data ?? null
         } catch (e: any) {

@@ -6,7 +6,7 @@
 </template>
 
 <script setup lang="ts">
-import { type UserResponse, type QueryOptions, UserResponseDto, UserResponseSchema } from '@pawspot/api-contracts'
+import { type UserResponse, type QueryOptions, UserType } from '@pawspot/api-contracts'
 import type { TypedTableColumn } from '~/types/table-types'
 
 const userStore = useUserStore()
@@ -60,7 +60,7 @@ const columns: TypedTableColumn<UserResponse>[] = [
         accessorKey: 'type',
         header: 'Type',
         sortable: true,
-        filter: { type: 'select', options: UserResponseSchema.shape.type.options.map((opt) => ({ label: opt, value: opt })) },
+        filter: { type: 'select', options: Object.values(UserType).map((value) => ({ label: value, value })) },
         meta: {
             style: {
                 th: 'width: 10%',

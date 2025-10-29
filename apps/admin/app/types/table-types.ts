@@ -9,7 +9,7 @@ export type InputType =
     | 'select'
     | 'range';
 
-export interface FilterOption {
+export interface SelectOption {
     label: string;
     value: string;
 }
@@ -17,7 +17,7 @@ export interface FilterOption {
 export interface FilterConfig {
     type: InputType;
     operators?: FilterOperator[];
-    options?: FilterOption[];
+    options?: SelectOption[];
     customComponent?: string;
 }
 

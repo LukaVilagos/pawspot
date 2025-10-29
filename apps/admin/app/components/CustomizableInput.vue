@@ -13,7 +13,7 @@
       </template>
 
       <template v-else-if="type === 'select'">
-        <USelect v-model="innerValue" :options="options" size="sm" :placeholder="placeholder" />
+        <USelect v-model="innerValue" :items="options" size="sm" :placeholder="placeholder" />
       </template>
 
       <template v-else-if="type === 'boolean'">
@@ -36,14 +36,13 @@
 </template>
 
 <script setup lang="ts">
-import { toRaw } from 'vue'
-import type { InputType } from '~/types/table-types';
+import type { InputType, SelectOption } from '~/types/table-types';
 
 const props = defineProps<{
   label?: string
   modelValue: any
   type?: InputType
-  options?: { label: string; value: string }[]
+  options?: SelectOption[]
   customComponent?: any
   componentProps?: Record<string, any>
   subTypeFrom?: string

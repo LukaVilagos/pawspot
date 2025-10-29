@@ -6,7 +6,12 @@ import { PaginatedResponseSchema } from "../../shared";
 // REQUEST SCHEMAS
 // ============================================================================
 
-export const UserTypeSchema = z.enum(['ADMIN', 'USER']);
+export enum UserType {
+  ADMIN = "ADMIN",
+  USER = "USER",
+}
+
+export const UserTypeSchema = z.enum([UserType.ADMIN, UserType.USER]);
 
 export const CreateUserRequestSchema = z.object({
   email: z.email(),
@@ -32,7 +37,7 @@ export const UserResponseSchema = z.object({
   createdAt: z.date(),
   email: z.email(),
   name: z.string().nullable(),
-  type: z.enum(['ADMIN', 'USER']),
+  type: UserTypeSchema
 });
 
 export const PaginatedUserResponseSchema = PaginatedResponseSchema(UserResponseSchema);

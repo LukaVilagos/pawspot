@@ -27,7 +27,6 @@ const { item, fields, entityName, onEdit, onDelete } = defineProps<{
 }>()
 
 const showDelete = ref(false)
-
 const headerLinks = ref<ButtonProps[]>([
     {
         label: 'Edit',
