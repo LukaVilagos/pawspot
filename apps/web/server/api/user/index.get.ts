@@ -1,12 +1,12 @@
-import { UserAdminContract } from "@pawspot/api-contracts";
+import { UserContract } from "@pawspot/api-contracts";
 
 export default defineEventHandler(
-  async (event): Promise<typeof UserAdminContract.getAll.response> => {
-    return await publicServerFetch<typeof UserAdminContract.getAll.response>(
+  async (event): Promise<typeof UserContract.getAll.response> => {
+    return await publicServerFetch<typeof UserContract.getAll.response>(
       event,
-      UserAdminContract.getAll.route,
+      UserContract.getAll.route,
       {
-        method: UserAdminContract.getAll.method,
+        method: UserContract.getAll.method,
       }
     );
   }

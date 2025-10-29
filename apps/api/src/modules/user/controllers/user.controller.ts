@@ -1,6 +1,6 @@
 import { Controller, Get, Param, UseGuards } from '@nestjs/common';
 import {
-  ADMIN_USER_ROUTES,
+  USER_ROUTES,
   UserResponseDto,
   UsersListResponseDto,
 } from '@pawspot/api-contracts';
@@ -8,7 +8,7 @@ import { UserService } from '../services/user.service';
 import { AuthGuard } from 'src/modules/auth/guards/auth.guard';
 import { ZodSerializerDto } from 'nestjs-zod';
 
-@Controller(ADMIN_USER_ROUTES.NORMAL_ROOT)
+@Controller(USER_ROUTES.ROOT)
 export class UserController {
   constructor(private readonly userService: UserService) { }
 
@@ -20,7 +20,7 @@ export class UserController {
 
   @ZodSerializerDto(UserResponseDto)
   @UseGuards(AuthGuard)
-  @Get(ADMIN_USER_ROUTES.BY_ID)
+  @Get(USER_ROUTES.BY_ID)
   async getUserById(@Param('id') id: string): Promise<UserResponseDto> {
     return this.userService.getUserById(id);
   }

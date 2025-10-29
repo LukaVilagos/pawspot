@@ -1,4 +1,4 @@
-import { ADMIN_USER_ROUTES } from './routes';
+import { ADMIN_USER_ROUTES, USER_ROUTES } from './routes';
 import type {
     UsersListResponseDto,
     UserResponseDto,
@@ -48,6 +48,22 @@ export const UserAdminContract = {
         response: {} as PaginatedResponse<UserResponseDto>,
     },
 } as const;
+
+export const UserContract = {
+    getAll: {
+        method: 'GET' as const,
+        route: USER_ROUTES.ROOT,
+        build: () => `${USER_ROUTES.ROOT}`,
+        response: {} as UsersListResponseDto,
+    },
+    getById: {
+        method: 'GET' as const,
+        route: USER_ROUTES.BY_ID,
+        params: {} as { id: string },
+        build: (p: { id: string }) => `${USER_ROUTES.ROOT}/${encodeURIComponent(p.id)}`,
+        response: {} as UserResponseDto,
+    },
+}
 
 
 export type UserAdminContractType = typeof UserAdminContract;

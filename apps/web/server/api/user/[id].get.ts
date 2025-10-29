@@ -1,21 +1,21 @@
-import { UserAdminContract } from "@pawspot/api-contracts";
+import { UserContract } from "@pawspot/api-contracts";
 
 export default defineEventHandler(
-  async (event): Promise<typeof UserAdminContract.getById.response> => {
+  async (event): Promise<typeof UserContract.getById.response> => {
     const id = event.context.params?.id;
 
     if (!id) {
       throw new Error("User ID is required");
     }
 
-    type GetByIdParams = typeof UserAdminContract.getById.params;
+    type GetByIdParams = typeof UserContract.getById.params;
     const params: GetByIdParams = { id };
 
-    return await protectedServerFetch<typeof UserAdminContract.getById.response>(
+    return await protectedServerFetch<typeof UserContract.getById.response>(
       event,
-      UserAdminContract.getById.build(params),
+      UserContract.getById.build(params),
       {
-        method: UserAdminContract.getById.method,
+        method: UserContract.getById.method,
       }
     );
   }
