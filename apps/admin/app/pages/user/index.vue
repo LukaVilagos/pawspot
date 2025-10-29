@@ -60,7 +60,7 @@ const columns: TypedTableColumn<UserResponse>[] = [
         accessorKey: 'type',
         header: 'Type',
         sortable: true,
-        filter: { type: 'select', options: Object.values(UserType).map((value) => ({ label: value, value })) },
+        filter: { type: 'select', options: enumToOptions(UserType) },
         meta: {
             style: {
                 th: 'width: 10%',

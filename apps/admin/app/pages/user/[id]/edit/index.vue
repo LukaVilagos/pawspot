@@ -22,6 +22,6 @@ const saveUser = async (id: string | number | undefined, payload: Record<string,
 const items: PageItem<UserResponse>[] = [
     { accessorKey: 'email', header: 'Email', type: 'text' },
     { accessorKey: 'name', header: 'Name', type: 'text' },
-    { accessorKey: "type", header: "Type", type: "select", options: Object.values(UserType).map((value) => ({ label: value, value })) }
+    { accessorKey: "type", header: "Type", type: "select", options: enumToOptions(UserType) }
 ]
 </script>
