@@ -13,7 +13,7 @@ const { user } = storeToRefs(userStore)
 
 await userStore.fetchUserById(String(route.params.id))
 
-const onEdit = () => router.push(`/user/edit/${route.params.id}`)
+const onEdit = () => router.push(`/user/${route.params.id}/edit/`)
 const onDelete = async () => {
     await userStore.deleteUser(String(route.params.id))
     router.push('/user')
@@ -23,5 +23,6 @@ const fields: PageItem<UserResponse>[] = [
     { accessorKey: 'email', header: 'Email', type: 'text' },
     { accessorKey: 'name', header: 'Name', type: 'text' },
     { accessorKey: 'createdAt', header: 'Created At', type: 'date' },
+    { accessorKey: "type", header: "Type", type: "text" },
 ]
 </script>

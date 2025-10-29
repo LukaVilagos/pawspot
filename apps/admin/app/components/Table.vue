@@ -7,7 +7,7 @@
           <div class="flex gap-2 flex-1">
             <template v-for="col in columns" :key="col.accessorKey">
               <FilterInput v-if="col.filter" :filter-config="col.filter" :label="col.header" :field="col.accessorKey"
-                :model-value="getFilterValueFromURL(col.accessorKey)"
+                :id="col.accessorKey" :model-value="getFilterValueFromURL(col.accessorKey)"
                 @update="(value: FilterValue) => setFilterValue(col.accessorKey, value)" />
             </template>
           </div>
@@ -18,6 +18,8 @@
         </div>
         <UTable ref="table" :data="data" :columns="tableColumns" :sticky="sticky" :loading="loading"
           class="flex-1 w-full" :ui="{ base: 'table-fixed' }" />
+
+        <DeleteItemModal v-model="showDelete" :item-name="entityName" @confirm="onConfirmDelete" />
         <div class="flex flex-row justify-center">
           <UPagination class="mt-4 self-center" :total="total" :page="page" :items-per-page="pageSize"
             @update:page="handlePageChange" />
@@ -78,6 +80,9 @@ const sorting = ref<SortingState[]>([])
 const columnFilters = ref<ColumnFilter[]>([])
 const isInitializing = ref(true)
 
+const showDelete = ref(false)
+const selectedDeleteId = ref<string | null>(null)
+
 const PAGE_SIZE = 10
 
 const actionsColumn: TableColumn<T> = {
@@ -94,7 +99,8 @@ const actionsColumn: TableColumn<T> = {
       id: info.row.original.id,
       basePath: props.actionsURLBase,
       deleteMethod: async () => {
-        await props.deleteMethod(info.row.original.id as string)
+        selectedDeleteId.value = info.row.original.id as string
+        showDelete.value = true
       },
       additionalItems: props.additionalTableActions
     })
@@ -323,4 +329,24 @@ watch(
 )
 
 const table = ref()
+
+async function onConfirmDelete() {
+  if (!selectedDeleteId.value) return
+
+  try {
+    const success = await props.deleteMethod(selectedDeleteId.value)
+    // Optionally reload data if deletion succeeded
+    if (success) {
+      // rebuild current payload and load
+      const payload = buildFilterPayload()
+      payload.page = Number(route.query.page) || props.page || 1
+      await props.loadData(payload)
+    }
+  } catch (e) {
+    console.error('Failed to delete item', e)
+  } finally {
+    selectedDeleteId.value = null
+    showDelete.value = false
+  }
+}
 </script>

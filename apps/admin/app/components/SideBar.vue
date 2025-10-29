@@ -1,26 +1,49 @@
 <template>
-    <UNavigationMenu
-        orientation="vertical"
-        :items="items"
-        class="data-[orientation=vertical]:w-48 h-full flex flex-col"
-    >
-        <template #list-trailing>
-            <div class="mt-auto p-2">
-                <UButton label="Log out" @click="logout" v-if="loggedIn" class="w-full" />
+    <UDashboardSidebar resizable collapsible>
+        <template #header="{ collapsed }">
+            <div class="w-full flex items-center gap-3">
+                <div class="flex items-center gap-2">
+                    <UIcon name="i-mdi-paw" class="size-5 text-primary" />
+                    <span v-if="!collapsed" class="font-semibold">PawSpot</span>
+                </div>
             </div>
         </template>
-    </UNavigationMenu>
+
+        <template #default="{ collapsed }">
+            <div class="flex flex-col gap-2">
+                <UNavigationMenu :collapsed="collapsed" :items="items[0]" orientation="vertical" />
+
+                <UNavigationMenu :collapsed="collapsed" :items="items[1]" orientation="vertical" class="mt-auto" />
+            </div>
+        </template>
+
+        <template #footer="{ collapsed }">
+            <div class="w-full flex flex-col gap-2">
+                <UButton v-if="loggedIn" :avatar="userAvatar ? { src: userAvatar } : undefined"
+                    :label="collapsed ? undefined : userName" color="neutral" variant="ghost" class="w-full" />
+
+                <div class="pt-1">
+                    <UButton label="Log out" @click="logout" color="error" variant="subtle" class="w-full"
+                        v-if="loggedIn" />
+                </div>
+            </div>
+        </template>
+    </UDashboardSidebar>
 </template>
 
 <script setup lang="ts">
+import { ref, computed } from 'vue'
 import type { NavigationMenuItem } from '@nuxt/ui'
 
-const { loggedIn, logout } = useAuth();
+const { loggedIn, logout, user } = useAuth();
+
+const userName = computed(() => (user as any)?.value?.name ?? 'Admin');
+const userAvatar = computed(() => (user as any)?.value?.avatar ?? undefined);
 
 const items = ref<NavigationMenuItem[][]>([
     [
-        { label: 'Dashboard', to: '/' },
-        { label: 'Users', to: '/user' },
+        { label: 'Dashboard', to: '/', icon: 'i-lucide-home' },
+        { label: 'Users', to: '/user', icon: 'i-lucide-users' },
     ],
-]);
+])
 </script>

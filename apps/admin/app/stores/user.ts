@@ -33,8 +33,7 @@ export const useUserStore = defineStore('user', () => {
         error.value = null
         try {
             const api = useUserApi()
-            const res = await api.getUserById(id)
-            const data = res?.data?.value
+            const data = await api.getUserById(id)
             setUser(data ?? null)
             return data ?? null
         } catch (e: any) {
@@ -50,8 +49,7 @@ export const useUserStore = defineStore('user', () => {
         error.value = null
         try {
             const api = useUserApi()
-            const res = await api.updateUser(id, payload)
-            const data = res?.data?.value
+            const data = await api.updateUser(id, payload)
             if (data) {
                 searchResult.value = {
                     ...searchResult.value,
@@ -74,8 +72,7 @@ export const useUserStore = defineStore('user', () => {
         error.value = null
         try {
             const api = useUserApi()
-            const res = await api.createUser(payload)
-            const data = res?.data?.value
+            const data = await api.createUser(payload)
             if (data) {
                 searchResult.value = { ...searchResult.value, items: [data, ...searchResult.value.items] }
                 return data

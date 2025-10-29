@@ -96,7 +96,7 @@ const headerLinks = ref<ButtonProps[]>([
 	},
 	{
 		label: 'Cancel',
-		icon: 'mdi-delete',
+		icon: 'mdi-cancel',
 		color: 'error',
 		onClick: onCancel,
 	},

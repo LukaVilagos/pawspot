@@ -1,11 +1,13 @@
 <template>
-    <UModal v-model="open" :title="title">
+    <UModal v-model:open="open" :title="title">
         <template #body>
             {{ message }}
         </template>
         <template #footer>
-            <UButton variant="outline" size="sm" @click="onCancel">Cancel</UButton>
-            <UButton variant="solid" color="error" size="sm" @click="onConfirm">Delete</UButton>
+            <div class="flex justify-end w-full gap-2">
+                <UButton variant="outline" @click="onCancel">Cancel</UButton>
+                <UButton variant="solid" color="error" @click="onConfirm">Delete</UButton>
+            </div>
         </template>
     </UModal>
 </template>

@@ -1,6 +1,6 @@
 <template>
     <UDropdownMenu :items="items">
-        <UButton icon="mdi-dots-vertical" color="neutral" variant="outline"/>
+        <UButton icon="mdi-dots-vertical" color="neutral" variant="outline" />
     </UDropdownMenu>
 </template>
 
@@ -14,16 +14,16 @@ const { basePath, deleteMethod, id, additionalItems } = defineProps<{
     additionalItems?: DropdownMenuItem[][]
 }>();
 
-const items = ref<DropdownMenuItem[][]> ([
+const items = ref<DropdownMenuItem[][]>([
     [
         {
             label: 'View',
-            to: `${basePath}/view/${id}`,
+            to: `${basePath}/${id}`,
             icon: 'mdi-eye',
         },
         {
             label: 'Edit',
-            to: `${basePath}/edit/${id}`,
+            to: `${basePath}/${id}/edit`,
             icon: 'mdi-pencil',
         },
         {

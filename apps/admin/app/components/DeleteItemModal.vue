@@ -1,11 +1,11 @@
 <template>
-    <Modal v-model="open" :title="`Delete ${itemName}`"
+    <Modal :model-value="modelValue" :title="`Delete ${itemName}`"
         :message="`Are you sure you want to delete this ${itemName}? This action cannot be undone.`"
-        @confirm="confirmDelete" />
+        @update:model-value="val => emit('update:modelValue', val)" @confirm="confirmDelete" />
 </template>
 
 <script setup lang="ts">
-const props = defineProps<{
+defineProps<{
     modelValue: boolean
     itemName: string
 }>()
@@ -15,10 +15,8 @@ const emit = defineEmits<{
     (e: 'confirm'): void
 }>()
 
-const open = computed({
-    get: () => props.modelValue,
-    set: (v) => emit('update:modelValue', v),
-})
-
-const confirmDelete = () => emit('confirm')
+const confirmDelete = () => {
+    emit('update:modelValue', false)
+    emit('confirm')
+}
 </script>

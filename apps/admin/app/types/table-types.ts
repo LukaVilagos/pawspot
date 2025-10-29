@@ -1,6 +1,6 @@
 import type { FilterOperator } from '@pawspot/api-contracts';
 
-export type FilterInputType =
+export type InputType =
     | 'text'
     | 'number'
     | 'boolean'
@@ -15,7 +15,7 @@ export interface FilterOption {
 }
 
 export interface FilterConfig {
-    type: FilterInputType;
+    type: InputType;
     operators?: FilterOperator[];
     options?: FilterOption[];
     customComponent?: string;

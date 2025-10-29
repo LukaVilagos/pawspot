@@ -37,11 +37,12 @@
 
 <script setup lang="ts">
 import { toRaw } from 'vue'
+import type { InputType } from '~/types/table-types';
 
 const props = defineProps<{
   label?: string
   modelValue: any
-  type?: string
+  type?: InputType
   options?: { label: string; value: string }[]
   customComponent?: any
   componentProps?: Record<string, any>

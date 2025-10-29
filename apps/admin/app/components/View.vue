@@ -4,24 +4,9 @@
             :links="headerLinks" />
 
         <UPageBody>
-            <div v-for="field in fields" :key="String(field.accessorKey)">
-                <div class="text-sm text-gray-500">{{ field.header }}</div>
-                <div class="font-medium">
-                    <template v-if="field.type === 'boolean'">
-                        <UBadge :color="item[String(field.accessorKey)] ? 'info' : 'error'">
-                            {{ item[String(field.accessorKey)] ? 'Yes' : 'No' }}
-                        </UBadge>
-                    </template>
-                    <template v-else-if="field.type === 'date'">
-                        {{ new Date(item[String(field.accessorKey)]).toLocaleString() }}
-                    </template>
-                    <template v-else-if="field.type === 'custom' && field.component">
-                        <component :is="field.component" v-bind="item[String(field.accessorKey)]" />
-                    </template>
-                    <template v-else>
-                        {{ item[String(field.accessorKey)] }}
-                    </template>
-                </div>
+            <div>
+                <FieldDisplay v-for="field in fields" :key="String(field.accessorKey)" :field="field"
+                    :value="item[String(field.accessorKey)]" />
             </div>
         </UPageBody>
 

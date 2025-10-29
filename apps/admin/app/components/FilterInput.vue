@@ -7,7 +7,7 @@
 </template>
 
 <script setup lang="ts">
-import type { FilterConfig, FilterOption } from '~/types/table-types'
+import type { FilterConfig, FilterOption, InputType } from '~/types/table-types'
 import type { FilterCondition, FilterOperator } from '@pawspot/api-contracts'
 import CustomizableInput from '~/components/CustomizableInput.vue'
 import { toRaw } from 'vue'
@@ -25,7 +25,7 @@ const emit = defineEmits<{
   (e: 'update', value: FilterOutput): void
 }>()
 
-const getOperatorForType = (type: string): FilterOperator => {
+const getOperatorForType = (type: InputType): FilterOperator => {
   switch (type) {
     case 'number':
     case 'date':
