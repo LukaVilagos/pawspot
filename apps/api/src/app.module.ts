@@ -6,6 +6,7 @@ import { PrismaModule } from './modules/prisma/modules/prisma.module';
 import { APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
 import { ZodSerializerInterceptor, ZodValidationPipe } from 'nestjs-zod';
 import { AuditModule } from './modules/audit/modules/audit.module';
+import { SanctuaryModule } from './modules/sanctuary/modules/sanctuary.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { AuditModule } from './modules/audit/modules/audit.module';
     UserModule,
     AuthModule,
     AuditModule,
+    SanctuaryModule,
   ],
   controllers: [],
   providers: [{

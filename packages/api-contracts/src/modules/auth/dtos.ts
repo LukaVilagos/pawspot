@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { createZodDto } from "nestjs-zod";
-import { UserResponseSchema } from "../user";
+import { AuthUserSchema } from "../user";
 
 // ============================================================================
 // REQUEST SCHEMAS
@@ -29,12 +29,12 @@ export const AccessTokenResponseSchema = z.object({
 
 export const LoginResponseSchema = z.object({
   ...AccessTokenResponseSchema.shape,
-  user: UserResponseSchema,
+  user: AuthUserSchema,
 });
 
 export const RegisterResponseSchema = z.object({
   ...AccessTokenResponseSchema.shape,
-  user: UserResponseSchema,
+  user: AuthUserSchema,
 });
 
 // ============================================================================
@@ -53,9 +53,9 @@ export type RegisterResponse = z.infer<typeof RegisterResponseSchema>;
 
 export class RegisterRequestDto extends createZodDto(
   RegoisterUserRequestSchema
-) {}
+) { }
 export class AccessTokenResponseDto extends createZodDto(
   AccessTokenResponseSchema
-) {}
-export class LoginResponseDto extends createZodDto(LoginResponseSchema) {}
-export class RegisterResponseDto extends createZodDto(RegisterResponseSchema) {}
+) { }
+export class LoginResponseDto extends createZodDto(LoginResponseSchema) { }
+export class RegisterResponseDto extends createZodDto(RegisterResponseSchema) { }

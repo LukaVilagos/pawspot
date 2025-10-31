@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
-import { CreateUserRequestDto, LoginResponseDto, RegisterRequestDto, RegisterResponseDto, UserResponseDto } from '@pawspot/api-contracts';
+import { AuthUserDto, CreateUserRequestDto, LoginResponseDto, RegisterRequestDto, RegisterResponseDto, UserResponseDto, UserSummaryDto } from '@pawspot/api-contracts';
 import { User } from '@pawspot/db';
 import { UserService } from 'src/modules/user/services/user.service';
 
@@ -12,13 +12,13 @@ export class AuthService {
         private jwtService: JwtService,
     ) { }
 
-    private async serializeUser(user: User): Promise<UserResponseDto> {
+    private async serializeUser(user: User): Promise<AuthUserDto> {
         const { password, updatedAt, deletedAt, ...serializedUser } = user;
         return serializedUser;
     }
 
-    async validateUser(email: string, password: string): Promise<UserResponseDto> {
-        const user: User | null = await this.usersService.getUserByEmail(email);
+    async validateUser(email: string, password: string): Promise<AuthUserDto> {
+        const user: User | null = await this.usersService.findByEmail(email);
         if (!user) {
             throw new BadRequestException('User not found');
         }
@@ -36,7 +36,7 @@ export class AuthService {
     }
 
     async register(user: RegisterRequestDto): Promise<RegisterResponseDto> {
-        const existingUser = await this.usersService.getUserByEmail(user.email);
+        const existingUser = await this.usersService.findByEmail(user.email);
 
         if (existingUser) {
             throw new BadRequestException('email already exists');
@@ -46,7 +46,7 @@ export class AuthService {
         const newUser: CreateUserRequestDto = {
             ...user, password: hashedPassword
         };
-        const createdUser = await this.usersService.registerUser(newUser);
+        const createdUser = await this.usersService.register(newUser);
         return this.login(createdUser);
     }
 }

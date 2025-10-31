@@ -13,31 +13,31 @@ export class UserAdminController {
     @ZodSerializerDto(UserResponseDto)
     @Get(ADMIN_USER_ROUTES.BY_ID)
     async getUserById(@Param('id') id: string): Promise<UserResponseDto> {
-        return this.userService.getUserById(id);
+        return this.userService.findById(id);
     }
 
     @ZodSerializerDto(UserResponseDto)
     @Post(ADMIN_USER_ROUTES.CREATE)
     async createUser(@Body() user: CreateUserRequestDto): Promise<UserResponseDto> {
-        return this.userService.createUser(user);
+        return this.userService.create(user);
     }
 
     @ZodSerializerDto(UserResponseDto)
     @Put(ADMIN_USER_ROUTES.UPDATE)
     async updateUser(@Param('id') id: string, @Body() user: UpdateUserRequestDto): Promise<UserResponseDto> {
-        return this.userService.updateUser(id, user);
+        return this.userService.update(id, user);
     }
 
     @Delete(ADMIN_USER_ROUTES.DELETE)
     async deleteUser(@Param('id') id: string) {
-        await this.userService.deleteUser(id);
+        await this.userService.delete(id);
         return { message: 'User deleted successfully' };
     }
 
     @ZodSerializerDto(PaginatedUserResponseDto)
     @Post(ADMIN_USER_ROUTES.SEARCH)
     async searchUsers(@Body() query: QueryOptionsDto<UserResponseDto>): Promise<PaginatedUserResponseDto> {
-        return this.userService.searchUsers(query);
+        return this.userService.search(query);
     }
 }
 

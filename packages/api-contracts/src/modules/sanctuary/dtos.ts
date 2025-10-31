@@ -1,6 +1,7 @@
 import z from "zod";
-import { UserResponseSchema } from "../user";
+import { UserSummarySchema } from "../user";
 import { createZodDto } from "nestjs-zod";
+import { PaginatedResponseSchema } from "../..";
 
 // ============================================================================
 // REQUEST SCHEMAS
@@ -9,11 +10,15 @@ import { createZodDto } from "nestjs-zod";
 export const CreateSanctuaryRequestSchema = z.object({
   name: z.string(),
   location: z.string(),
+  ownerId: z.string().optional(),
+  contributors: z.array(z.string()).optional(),
 });
 
 export const UpdateSanctuaryRequestSchema = z.object({
   name: z.string().optional(),
   location: z.string().optional(),
+  ownerId: z.string().optional(),
+  contributors: z.array(z.string()).optional(),
 });
 
 // ============================================================================
@@ -23,14 +28,20 @@ export const UpdateSanctuaryRequestSchema = z.object({
 export const SanctuaryResponseSchema = z.object({
   id: z.string(),
   createdAt: z.date(),
-  updatedAt: z.date(),
-  deletedAt: z.date().nullable(),
   name: z.string(),
   location: z.string(),
-  owner: UserResponseSchema,
+  owner: UserSummarySchema,
+  contributors: z.array(UserSummarySchema),
+});
+
+export const SanctuarySummarySchema = SanctuaryResponseSchema.pick({
+  id: true,
+  name: true,
+  location: true,
 });
 
 export const SanctuariesListResponseSchema = z.array(SanctuaryResponseSchema);
+export const PaginatedSanctuaryResponseSchema = PaginatedResponseSchema(SanctuaryResponseSchema);
 
 // ============================================================================
 // TYPE EXPORTS
@@ -39,6 +50,13 @@ export const SanctuariesListResponseSchema = z.array(SanctuaryResponseSchema);
 export type SanctuaryResponse = z.infer<typeof SanctuaryResponseSchema>;
 export type SanctuariesListResponse = z.infer<
   typeof SanctuariesListResponseSchema
+>;
+export type SanctuarySummary = z.infer<typeof SanctuarySummarySchema>;
+export type CreateSanctuaryRequest = z.infer<
+  typeof CreateSanctuaryRequestSchema
+>;
+export type UpdateSanctuaryRequest = z.infer<
+  typeof UpdateSanctuaryRequestSchema
 >;
 
 // ============================================================================
@@ -53,4 +71,13 @@ export class SanctuariesListResponseDto extends createZodDto(
 ) { }
 export class CreateSanctuaryRequestDto extends createZodDto(
   CreateSanctuaryRequestSchema
+) { }
+export class UpdateSanctuaryRequestDto extends createZodDto(
+  UpdateSanctuaryRequestSchema
+) { }
+export class PaginatedSanctuaryResponseDto extends createZodDto(
+  PaginatedSanctuaryResponseSchema
+) { }
+export class SanctuarySummaryDto extends createZodDto(
+  SanctuarySummarySchema
 ) { }

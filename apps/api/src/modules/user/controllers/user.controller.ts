@@ -15,13 +15,13 @@ export class UserController {
   @ZodSerializerDto(UsersListResponseDto)
   @Get()
   async getUser(): Promise<UsersListResponseDto> {
-    return this.userService.getUser();
+    return this.userService.findAll();
   }
 
   @ZodSerializerDto(UserResponseDto)
   @UseGuards(AuthGuard)
   @Get(USER_ROUTES.BY_ID)
   async getUserById(@Param('id') id: string): Promise<UserResponseDto> {
-    return this.userService.getUserById(id);
+    return this.userService.findById(id);
   }
 }

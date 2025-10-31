@@ -1,11 +1,56 @@
 import { PaginatedResponse, QueryOptions } from "../../shared";
-import { CreateSanctuaryRequestDto, SanctuariesListResponseDto, SanctuaryResponseDto } from "./dtos";
-import { SANCTUARY_ROUTES } from "./routes";
+import { CreateSanctuaryRequestDto, SanctuariesListResponseDto, SanctuaryResponseDto, UpdateSanctuaryRequestDto } from "./dtos";
+import { SANCTUARY_ADMIN_ROUTES, SANCTUARY_ROUTES } from "./routes";
 
-export const SanctuaryContract = {
+export const SanctuaryAdminContract = {
     getAll: {
         method: 'GET' as const,
-        route: SANCTUARY_ROUTES.ROOT,
+        route: SANCTUARY_ADMIN_ROUTES.ROOT,
+        response: {} as SanctuariesListResponseDto,
+    },
+    getById: {
+        method: 'GET' as const,
+        route: SANCTUARY_ADMIN_ROUTES.BY_ID,
+        params: {} as { id: string },
+        build: (p: { id: string }) => `${SANCTUARY_ADMIN_ROUTES.ROOT}/${encodeURIComponent(p.id)}`,
+        response: {} as SanctuaryResponseDto,
+    },
+    create: {
+        method: 'POST' as const,
+        route: SANCTUARY_ADMIN_ROUTES.CREATE,
+        build: () => `${SANCTUARY_ADMIN_ROUTES.ROOT}/${SANCTUARY_ADMIN_ROUTES.CREATE}`,
+        request: {} as CreateSanctuaryRequestDto,
+        response: {} as SanctuaryResponseDto,
+    },
+    update: {
+        method: 'PUT' as const,
+        route: SANCTUARY_ADMIN_ROUTES.UPDATE,
+        params: {} as { id: string },
+        build: (p: { id: string }) => `${SANCTUARY_ADMIN_ROUTES.ROOT}/${encodeURIComponent(p.id)}`,
+        request: {} as Partial<CreateSanctuaryRequestDto>,
+        response: {} as SanctuaryResponseDto,
+    },
+    delete: {
+        method: 'DELETE' as const,
+        route: SANCTUARY_ADMIN_ROUTES.DELETE,
+        params: {} as { id: string },
+        build: (p: { id: string }) => `${SANCTUARY_ADMIN_ROUTES.ROOT}/${encodeURIComponent(p.id)}`,
+    },
+    search: {
+        method: 'POST' as const,
+        route: SANCTUARY_ADMIN_ROUTES.SEARCH,
+        build: () => `${SANCTUARY_ADMIN_ROUTES.ROOT}/${SANCTUARY_ADMIN_ROUTES.SEARCH}`,
+        request: {} as QueryOptions<SanctuaryResponseDto>,
+        response: {} as PaginatedResponse<SanctuaryResponseDto>,
+    }
+} as const;
+
+export const SanctuaryContract = {
+    getByLocation: {
+        method: 'GET' as const,
+        route: SANCTUARY_ROUTES.BY_LOCATION,
+        params: {} as { location: string },
+        build: (p: { location: string }) => `${SANCTUARY_ROUTES.ROOT}/${encodeURIComponent(p.location)}`,
         response: {} as SanctuariesListResponseDto,
     },
     getById: {
@@ -27,7 +72,7 @@ export const SanctuaryContract = {
         route: SANCTUARY_ROUTES.UPDATE,
         params: {} as { id: string },
         build: (p: { id: string }) => `${SANCTUARY_ROUTES.ROOT}/${encodeURIComponent(p.id)}`,
-        request: {} as Partial<CreateSanctuaryRequestDto>,
+        request: {} as UpdateSanctuaryRequestDto,
         response: {} as SanctuaryResponseDto,
     },
     delete: {
@@ -36,13 +81,19 @@ export const SanctuaryContract = {
         params: {} as { id: string },
         build: (p: { id: string }) => `${SANCTUARY_ROUTES.ROOT}/${encodeURIComponent(p.id)}`,
     },
-    search: {
+    join: {
         method: 'POST' as const,
-        route: SANCTUARY_ROUTES.SEARCH,
-        build: () => `${SANCTUARY_ROUTES.ROOT}/${SANCTUARY_ROUTES.SEARCH}`,
-        request: {} as QueryOptions<SanctuaryResponseDto>,
-        response: {} as PaginatedResponse<SanctuaryResponseDto>,
+        route: SANCTUARY_ROUTES.JOIN,
+        params: {} as { id: string },
+        build: (p: { id: string }) => `${SANCTUARY_ROUTES.ROOT}/${encodeURIComponent(p.id)}/join`,
     },
+    leave: {
+        method: 'POST' as const,
+        route: SANCTUARY_ROUTES.LEAVE,
+        params: {} as { id: string },
+        build: (p: { id: string }) => `${SANCTUARY_ROUTES.ROOT}/${encodeURIComponent(p.id)}/leave`,
+    }
 } as const;
 
+export type SanctuaryAdminContractType = typeof SanctuaryAdminContract;
 export type SanctuaryContractType = typeof SanctuaryContract;

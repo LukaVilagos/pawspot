@@ -20,29 +20,33 @@ enum UserType {
 }
 
 model User {
-  id          String      @id @default(cuid())
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
-  deletedAt   DateTime?
-  email       String      @unique
-  name        String?
-  password    String
-  sanctuaries Sanctuary[]
-  type        UserType    @default(USER)
-  AuditLog    AuditLog[]
+  id                  String      @id @default(cuid())
+  createdAt           DateTime    @default(now())
+  updatedAt           DateTime    @updatedAt
+  deletedAt           DateTime?
+  email               String      @unique
+  name                String?
+  password            String
+  sanctuaries         Sanctuary[] @relation("SanctuaryOwner")
+  followedSanctuaries Sanctuary[] @relation("SanctuaryContributors")
+  type                UserType    @default(USER)
+  AuditLog            AuditLog[]
+  Post                Post[]
 }
 
 model Sanctuary {
-  id        String    @id @default(cuid())
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  deletedAt DateTime?
-  name      String
-  location  String
-  ownerId   String
-  owner     User      @relation(fields: [ownerId], references: [id])
-  animals   Animal[]
-  qrCode    QrCode?
+  id           String    @id @default(cuid())
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  deletedAt    DateTime?
+  name         String
+  location     String
+  ownerId      String
+  owner        User      @relation("SanctuaryOwner", fields: [ownerId], references: [id])
+  contributors User[]    @relation("SanctuaryContributors")
+  qrCode       QrCode?
+  animals      Animal[]
+  Post         Post[]
 }
 
 model Animal {
@@ -76,4 +80,17 @@ model AuditLog {
   action    String
   userId    String
   user      User      @relation(fields: [userId], references: [id])
+}
+
+model Post {
+  id          String    @id @default(cuid())
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+  title       String
+  content     String
+  userId      String
+  user        User      @relation(fields: [userId], references: [id])
+  sanctuaryId String
+  sanctuary   Sanctuary @relation(fields: [sanctuaryId], references: [id])
 }

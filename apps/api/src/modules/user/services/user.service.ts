@@ -17,16 +17,25 @@ export class UserService {
 
   private readonly logger = new PawSpotLogger(UserService.name);
 
-  async getUser(): Promise<UsersListResponseDto> {
+  async findAll(): Promise<UsersListResponseDto> {
     this.logger.log('Getting all users');
-    return this.prisma.client.user.findMany();
+    return this.prisma.client.user.findMany({
+      include: {
+        sanctuaries: true,
+        followedSanctuaries: true,
+      }
+    });
   }
 
-  async getUserById(id: string): Promise<UserResponseDto> {
+  async findById(id: string): Promise<UserResponseDto> {
     this.logger.log(`Getting user by id: ${id}`);
     const user = await this.prisma.client.user.findUnique({
       where: { id },
       omit: { password: true },
+      include: {
+        sanctuaries: true,
+        followedSanctuaries: true,
+      }
     });
     if (!user) {
       throw new Error('User not found');
@@ -34,7 +43,8 @@ export class UserService {
     return user;
   }
 
-  async getUserByEmail(email: string): Promise<User | null> {
+  async findByEmail(email: string): Promise<User | null> {
+    this.logger.log(`Getting user by email: ${email}`);
     const user = await this.prisma.client.user.findUnique({
       where: { email },
     });
@@ -42,41 +52,56 @@ export class UserService {
     return user;
   }
 
-  async registerUser(user: CreateUserRequestDto): Promise<User> {
+  async register(user: CreateUserRequestDto): Promise<User> {
+    this.logger.log(`Registering user: ${user.email}`);
     return this.prisma.client.user.create({
       data: user,
     });
   }
 
-  async createUser(user: CreateUserRequestDto): Promise<UserResponseDto> {
+  async create(user: CreateUserRequestDto): Promise<UserResponseDto> {
+    this.logger.log(`Creating user: ${user.email}`);
     const hashedPassword = await bcrypt.hash(user.password, 10);
     user.password = hashedPassword;
 
     const createdUser = await this.prisma.client.user.create({
       data: user,
       omit: { password: true },
+      include: {
+        sanctuaries: true,
+        followedSanctuaries: true,
+      }
     });
 
-    this.auditService.logAction(createdUser.id, 'Created user');
+    await this.auditService.logAction(createdUser.id, 'Created user');
     return createdUser;
   }
 
-  async updateUser(id: string, user: Partial<CreateUserRequestDto>): Promise<UserResponseDto> {
+  async update(id: string, user: Partial<CreateUserRequestDto>): Promise<UserResponseDto> {
+    this.logger.log(`Updating user: ${id}`);
     return this.prisma.client.user.update({
       where: { id },
       data: user,
       omit: { password: true },
+      include: {
+        sanctuaries: true,
+        followedSanctuaries: true,
+      }
     });
   }
 
-  async deleteUser(id: string) {
-    return this.prisma.client.user.update({
+  async delete(id: string) {
+    this.logger.log(`Deleting user: ${id}`);
+    await this.prisma.client.user.update({
       where: { id },
       data: { deletedAt: new Date() },
     });
+
+    await this.auditService.logAction(id, 'Deleted user');
   }
 
-  async searchUsers(query: QueryOptionsDto<UserResponseDto>): Promise<PaginatedResponse<UserResponseDto>> {
+  async search(query: QueryOptionsDto<UserResponseDto>): Promise<PaginatedResponse<UserResponseDto>> {
+    this.logger.log(`Searching users with query: ${JSON.stringify(query)}`);
     return this.searchService.search<UserResponseDto>('user', query);
   }
 }
