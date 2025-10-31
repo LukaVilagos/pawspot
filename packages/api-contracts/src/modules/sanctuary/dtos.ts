@@ -1,7 +1,7 @@
 import z from "zod";
 import { UserSummarySchema } from "../user";
 import { createZodDto } from "nestjs-zod";
-import { PaginatedResponseSchema } from "../..";
+import { PaginatedResponseSchema } from "../../shared";
 
 // ============================================================================
 // REQUEST SCHEMAS
