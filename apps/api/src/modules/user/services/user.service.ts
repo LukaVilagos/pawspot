@@ -4,17 +4,26 @@ import { User } from '@pawspot/db';
 import { PrismaService } from 'src/modules/prisma/services/prisma.service';
 import { SearchService } from 'src/modules/prisma/services/search.service';
 import * as bcrypt from 'bcrypt';
+import { PawSpotLogger } from 'src/common/logger/logger';
+import { AuditService } from 'src/modules/audit/services/audit.service';
 
 
 @Injectable()
 export class UserService {
-  constructor(private prisma: PrismaService, private searchService: SearchService) { }
+  constructor(
+    private prisma: PrismaService,
+    private searchService: SearchService,
+    private auditService: AuditService) { }
+
+  private readonly logger = new PawSpotLogger(UserService.name);
 
   async getUser(): Promise<UsersListResponseDto> {
+    this.logger.log('Getting all users');
     return this.prisma.client.user.findMany();
   }
 
   async getUserById(id: string): Promise<UserResponseDto> {
+    this.logger.log(`Getting user by id: ${id}`);
     const user = await this.prisma.client.user.findUnique({
       where: { id },
       omit: { password: true },
@@ -43,10 +52,13 @@ export class UserService {
     const hashedPassword = await bcrypt.hash(user.password, 10);
     user.password = hashedPassword;
 
-    return this.prisma.client.user.create({
+    const createdUser = await this.prisma.client.user.create({
       data: user,
       omit: { password: true },
     });
+
+    this.auditService.logAction(createdUser.id, 'Created user');
+    return createdUser;
   }
 
   async updateUser(id: string, user: Partial<CreateUserRequestDto>): Promise<UserResponseDto> {

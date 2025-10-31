@@ -29,6 +29,7 @@ model User {
   password    String
   sanctuaries Sanctuary[]
   type        UserType    @default(USER)
+  AuditLog    AuditLog[]
 }
 
 model Sanctuary {
@@ -65,4 +66,14 @@ model QrCode {
   imageUrl    String
   sanctuary   Sanctuary @relation(fields: [sanctuaryId], references: [id])
   sanctuaryId String    @unique
+}
+
+model AuditLog {
+  id        String    @id @default(cuid())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  action    String
+  userId    String
+  user      User      @relation(fields: [userId], references: [id])
 }

@@ -16,7 +16,7 @@ export async function protectedServerFetch<T = unknown>(
     headers.Authorization = `Bearer ${session.access_token}`;
   }
 
-  const baseURL = useRuntimeConfig().public.apiUrl;
+  const baseURL = useRuntimeConfig().public.apiUrl as string;
 
   return (await $fetch<T>(url, {
     baseURL,
@@ -32,7 +32,8 @@ export async function publicServerFetch<T = unknown>(
 ): Promise<T> {
   const originalHeaders = options.headers;
   const headers: Record<string, string> = { ...(originalHeaders || {}) };
-  const baseURL = useRuntimeConfig().public.apiUrl;
+
+  const baseURL = useRuntimeConfig().public.apiUrl as string;
 
   return (await $fetch<T>(url, {
     baseURL,
