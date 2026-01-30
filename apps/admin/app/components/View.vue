@@ -1,16 +1,16 @@
 <template>
     <UPage>
-        <UPageHeader headline="Details" :title="entityName" description="Edit or delete this item"
+        <UPageHeader headline="Details" :title="props.entityName" description="Edit or delete this item"
             :links="headerLinks" />
 
         <UPageBody>
             <div>
-                <FieldDisplay v-for="field in fields" :key="String(field.accessorKey)" :field="field"
-                    :value="item[String(field.accessorKey)]" />
+                <FieldDisplay v-for="field in props.fields" :key="String(field.accessorKey)" :field="field"
+                    :value="props.item[String(field.accessorKey)]" />
             </div>
         </UPageBody>
 
-        <DeleteItemModal v-model="showDelete" :item-name="entityName" @confirm="onDelete" />
+        <DeleteItemModal v-model="showDelete" :item-name="props.entityName" @confirm="props.onDelete" />
     </UPage>
 </template>
 
@@ -18,13 +18,19 @@
 import type { PageItem } from '~/types/PageItem'
 import type { ButtonProps } from '@nuxt/ui'
 
-const { item, fields, entityName, onEdit, onDelete } = defineProps<{
+const props = withDefaults(defineProps<{
     item: Record<string, any>
     fields: PageItem<any>[]
     entityName: string
     onEdit: () => void
     onDelete: () => Promise<void> | void
-}>()
+}>(), {
+    item: () => ({}),
+    fields: () => [],
+    entityName: 'Item',
+    onEdit: () => { },
+    onDelete: async () => { }
+})
 
 const showDelete = ref(false)
 const headerLinks = ref<ButtonProps[]>([
@@ -32,7 +38,7 @@ const headerLinks = ref<ButtonProps[]>([
         label: 'Edit',
         icon: 'mdi-pencil',
         color: 'primary',
-        onClick: onEdit,
+        onClick: props.onEdit,
     },
     {
         label: 'Delete',

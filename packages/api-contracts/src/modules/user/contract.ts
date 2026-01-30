@@ -2,7 +2,8 @@ import { ADMIN_USER_ROUTES, USER_ROUTES } from './routes';
 import type {
     UsersListResponseDto,
     UserResponseDto,
-    CreateUserRequestDto
+    CreateUserRequestDto,
+    AdminUpdateUserRequestDto
 } from './dtos';
 import { QueryOptions, PaginatedResponse } from '../..';
 
@@ -31,7 +32,7 @@ export const UserAdminContract = {
         route: ADMIN_USER_ROUTES.UPDATE,
         params: {} as { id: string },
         build: (p: { id: string }) => `${ADMIN_USER_ROUTES.ROOT}/${encodeURIComponent(p.id)}`,
-        request: {} as Partial<CreateUserRequestDto>,
+        request: {} as AdminUpdateUserRequestDto,
         response: {} as UserResponseDto,
     },
     delete: {

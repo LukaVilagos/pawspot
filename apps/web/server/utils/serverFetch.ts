@@ -18,11 +18,18 @@ export async function protectedServerFetch<T = unknown>(
 
   const baseURL = useRuntimeConfig().public.apiUrl as string;
 
-  return (await $fetch<T>(url, {
-    baseURL,
-    ...options,
-    headers,
-  })) as T;
+  try {
+    return (await $fetch<T>(url, {
+      baseURL,
+      ...options,
+      headers,
+    })) as T;
+  } catch (error: any) {
+    if (error?.response?.status === 401 || error?.statusCode === 401) {
+      await clearUserSession(event);
+    }
+    throw error;
+  }
 }
 
 export async function publicServerFetch<T = unknown>(

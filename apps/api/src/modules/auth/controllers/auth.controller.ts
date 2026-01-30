@@ -11,11 +11,9 @@ export class AuthController {
     constructor(private authService: AuthService) { }
 
     @ZodSerializerDto(LoginResponseDto)
-    @UseGuards(AuthGuard('local'))
     @Post(AUTH_ROUTES.LOGIN)
     async login(@Request() req): Promise<LoginResponseDto | BadRequestException> {
-        const response = await this.authService.login(req.user);
-        return response;
+        return this.authService.login(req.user);
     }
 
     @ZodSerializerDto(RegisterResponseDto)

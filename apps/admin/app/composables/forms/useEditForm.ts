@@ -13,12 +13,12 @@ export function useEditForm<T extends Record<string, any>>(
     const { handleSubmit, errors, isSubmitting, defineField, setValues, setFieldError, setErrors } =
         useForm<T>({
             validationSchema,
-            initialValues: initialValues as any,
+            initialValues: initialValues,
         })
 
     const formValues = reactive<Record<string, any>>({})
     for (const key of Object.keys(initialValues ?? {})) {
-        const [value] = defineField(key as any)
+        const [value] = defineField(key)
         formValues[key] = value
     }
 

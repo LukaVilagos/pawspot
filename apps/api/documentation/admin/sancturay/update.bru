@@ -1,0 +1,15 @@
+meta {
+  name: update
+  type: http
+  seq: 3
+}
+
+put {
+  url: {{apiUrl}}/{{root}}/{{sanctuaryId}}
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+}

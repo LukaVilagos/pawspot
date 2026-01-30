@@ -1,0 +1,15 @@
+meta {
+  name: delete
+  type: http
+  seq: 4
+}
+
+delete {
+  url: {{apiUrl}}/{{root}}/{{sanctuaryId}}
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+}

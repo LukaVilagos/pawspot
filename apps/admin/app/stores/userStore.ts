@@ -1,11 +1,12 @@
 import type {
     UserResponse,
     CreateUserRequest,
-    UpdateUserRequest,
+    AdminUpdateUserRequest,
     QueryOptions,
     PaginatedResponse,
 } from '@pawspot/api-contracts'
 import { normalizeApiError } from '~/utils/error'
+import { invalidateStoreCache } from '~/utils/storeUtils'
 
 export const useUserStore = defineStore('user', () => {
     const user = ref<UserResponse | null>(null)
@@ -16,7 +17,8 @@ export const useUserStore = defineStore('user', () => {
         limit: 10,
         totalPages: 1,
     })
-    const isLoading = ref(false)
+    const isLoading = ref(true)
+    const hasInitiallyLoaded = ref(false)
     const error = ref<string | null>(null)
     const lastQuery = ref<string | null>(null)
 
@@ -34,29 +36,34 @@ export const useUserStore = defineStore('user', () => {
         try {
             const api = useUserApi()
             const res = await api.getUserById(id)
+
+            if (res.error.value) {
+                error.value = res.error.value?.message ?? String(res.error.value)
+                throw normalizeApiError(res.error.value)
+            }
+            
             const data = res.data.value
             setUser(data ?? null)
             return data ?? null
         } catch (e: any) {
-            error.value = e?.message ?? String(e)
+            if (!error.value) {
+                error.value = e?.message ?? String(e)
+            }
             throw normalizeApiError(e)
         } finally {
             isLoading.value = false
         }
     }
 
-    async function updateUser(id: string, payload: UpdateUserRequest) {
+    async function updateUser(id: string, payload: AdminUpdateUserRequest) {
         isLoading.value = true
         error.value = null
         try {
             const api = useUserApi()
             const data = await api.updateUser(id, payload)
             if (data) {
-                searchResult.value = {
-                    ...searchResult.value,
-                    items: searchResult.value.items.map((u) => (u.id === data.id ? data : u)),
-                }
                 if (user.value?.id === data.id) user.value = data
+                invalidateStoreCache({ searchResult, lastQuery, hasInitiallyLoaded, isLoading })
                 return data
             }
             throw new Error('No data returned from API')
@@ -75,7 +82,7 @@ export const useUserStore = defineStore('user', () => {
             const api = useUserApi()
             const data = await api.createUser(payload)
             if (data) {
-                searchResult.value = { ...searchResult.value, items: [data, ...searchResult.value.items] }
+                invalidateStoreCache({ searchResult, lastQuery, hasInitiallyLoaded, isLoading })
                 return data
             }
             throw new Error('No data returned from API')
@@ -93,11 +100,8 @@ export const useUserStore = defineStore('user', () => {
         try {
             const api = useUserApi()
             await api.deleteUser(id)
-            searchResult.value = {
-                ...searchResult.value,
-                items: searchResult.value.items.filter((u) => u.id !== id),
-            }
             if (user.value?.id === id) user.value = null
+            invalidateStoreCache({ searchResult, lastQuery, hasInitiallyLoaded, isLoading })
             return true
         } catch (e: any) {
             error.value = e?.message ?? String(e)
@@ -109,7 +113,7 @@ export const useUserStore = defineStore('user', () => {
 
     async function searchUsers(query: QueryOptions<UserResponse>) {
         const queryString = JSON.stringify(query)
-        if (queryString === lastQuery.value) {
+        if (queryString === lastQuery.value && hasInitiallyLoaded.value) {
             return searchResult.value
         }
 
@@ -129,14 +133,17 @@ export const useUserStore = defineStore('user', () => {
             throw normalizeApiError(e)
         } finally {
             isLoading.value = false
+            hasInitiallyLoaded.value = true
         }
     }
 
     return {
         isLoading,
+        hasInitiallyLoaded,
         error,
         user,
         searchResult,
+        lastQuery,
         setUser,
         setSearchResult,
         fetchUserById,

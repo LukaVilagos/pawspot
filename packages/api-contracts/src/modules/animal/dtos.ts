@@ -1,35 +1,23 @@
 import { z } from "zod";
 import { createZodDto } from "nestjs-zod";
 
-// ============================================================================
-// REQUEST SCHEMAS
-// ============================================================================
-
-export const CreateAnimalRequestSchema = z.object({
-    name: z.string().min(1),
-    species: z.string().min(1),
-    age: z.number().int().min(0),
-    sanctuaryId: z.string().min(1),
+export const CreateAnimalRequestSchema = z.strictObject({
+    name: z.string().min(1, 'Name is required'),
+    species: z.string().min(1, 'Species is required'),
+    age: z.number().int('Age must be a whole number').min(0, 'Age cannot be negative'),
+    sanctuaryId: z.string().min(1, 'Sanctuary is required'),
 });
 
-export const UpdateAnimalRequestSchema = z.object({
-    name: z.string().min(1).optional(),
-    species: z.string().min(1).optional(),
-    age: z.number().int().min(0).optional(),
-    sanctuaryId: z.string().min(1).optional(),
+export const UpdateAnimalRequestSchema = z.strictObject({
+    name: z.string().min(1, 'Name cannot be empty').optional(),
+    species: z.string().min(1, 'Species cannot be empty').optional(),
+    age: z.number().int('Age must be a whole number').min(0, 'Age cannot be negative').optional(),
+    sanctuaryId: z.string().min(1, 'Sanctuary cannot be empty').optional(),
 });
 
-// ============================================================================
-
-// ============================================================================
-// RESPONSE SCHEMAS
-// ============================================================================
-
-export const AnimalResponseSchema = z.object({
+export const AnimalResponseSchema = z.strictObject({
     id: z.string(),
-    createdAt: z.date(),
-    updatedAt: z.date(),
-    deletedAt: z.date().nullable(),
+    createdAt: z.coerce.date(),
     name: z.string(),
     species: z.string(),
     age: z.number().int(),
@@ -38,18 +26,10 @@ export const AnimalResponseSchema = z.object({
 
 export const AnimalsListResponseSchema = z.array(AnimalResponseSchema);
 
-// ============================================================================
-// TYPE EXPORTS
-// ============================================================================
-
 export type AnimalResponse = z.infer<typeof AnimalResponseSchema>;
 export type AnimalsListResponse = z.infer<typeof AnimalsListResponseSchema>;
 export type CreateAnimalRequest = z.infer<typeof CreateAnimalRequestSchema>;
 export type UpdateAnimalRequest = z.infer<typeof UpdateAnimalRequestSchema>;
-
-// ============================================================================
-// DTO EXPORTS (for NestJS)
-// ============================================================================
 
 export class AnimalResponseDto extends createZodDto(AnimalResponseSchema) { }
 export class AnimalsListResponseDto extends createZodDto(

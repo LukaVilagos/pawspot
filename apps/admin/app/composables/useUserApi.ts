@@ -1,14 +1,14 @@
 import type {
     UserResponse,
     CreateUserRequest,
-    UpdateUserRequest,
+    AdminUpdateUserRequest,
     PaginatedResponse,
     QueryOptions,
 } from "@pawspot/api-contracts";
 
 export const useUserApi = () => {
     const getUserById = async (id: string) => {
-        return await useFetch<UserResponse>(`/api/user/${id}`);
+        return await useAuthFetch<UserResponse>(`/api/user/${id}`);
     };
 
     const createUser = async (payload: CreateUserRequest) => {
@@ -18,7 +18,7 @@ export const useUserApi = () => {
         });
     };
 
-    const updateUser = async (id: string, payload: UpdateUserRequest) => {
+    const updateUser = async (id: string, payload: AdminUpdateUserRequest) => {
         return await $fetch<UserResponse>(`/api/user/${id}`, {
             method: "PUT",
             body: payload,

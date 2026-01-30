@@ -1,6 +1,6 @@
 <template>
-	<UPage>
-		<UForm @submit.prevent="submitHandler">
+	<UForm @submit="submitHandler">
+		<UPage>
 			<UPageHeader headline="Edit Item" :title="entityName" description="Modify the fields below"
 				:links="headerLinks" />
 			<UPageBody>
@@ -16,8 +16,8 @@
 					</UFormField>
 				</div>
 			</UPageBody>
-		</UForm>
-	</UPage>
+		</UPage>
+	</UForm>
 </template>
 
 <script setup lang="ts">
@@ -26,7 +26,7 @@ import type z from 'zod';
 import type { PageItem } from '~/types/PageItem'
 import type { ButtonProps } from '@nuxt/ui'
 
-const props = defineProps<{
+const props = withDefaults(defineProps<{
 	fields: PageItem<any>[]
 	item: Record<string, any>
 	schema: z.ZodTypeAny
@@ -34,7 +34,15 @@ const props = defineProps<{
 	saveFn: (id: string | number | undefined, payload: Record<string, any>) => Promise<any>
 	redirectTo?: string
 	idAccessor?: string
-}>()
+}>(), {
+	fields: () => [],
+	item: () => ({}),
+	entityName: 'Item',
+	idAccessor: 'id',
+	saveFn: async () => {
+		throw new Error('saveFn not provided')
+	}
+})
 
 const emit = defineEmits<{
 	(e: 'cancel'): void
@@ -44,15 +52,24 @@ const emit = defineEmits<{
 const router = useRouter()
 
 const validationSchema = toTypedSchema(props.schema)
+
+const initialValues = props.fields.reduce((acc, field) => {
+	const key = field.accessorKey as string
+	if (key in props.item) {
+		acc[key] = props.item[key]
+	}
+	return acc
+}, {} as Record<string, any>)
+
 const { handleSubmit, errors, defineField, setFieldError, setErrors } = useForm({
 	validationSchema,
-	initialValues: props.item,
+	initialValues,
 })
 
 const formValues = reactive<Record<string, any>>({})
-for (const key of Object.keys(props.item ?? {})) {
-	const [value] = defineField(key as any)
-	formValues[key] = value
+for (const field of props.fields) {
+	const [value] = defineField(field.accessorKey as string)
+	formValues[field.accessorKey as string] = value
 }
 
 const onSubmit = handleSubmit(async (values) => {
@@ -79,7 +96,7 @@ const onSubmit = handleSubmit(async (values) => {
 })
 
 const submitHandler = (e?: Event) => {
-	void onSubmit(e as any)
+	void onSubmit(e)
 }
 
 const onCancel = () => {

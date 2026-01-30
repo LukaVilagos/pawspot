@@ -19,7 +19,6 @@ export const useUserStore = defineStore("user", () => {
       users.value = data.data.value || [];
     } catch (e) {
       error.value = "Failed to fetch users";
-      console.error(e);
     } finally {
       loading.value = false;
     }
@@ -35,7 +34,6 @@ export const useUserStore = defineStore("user", () => {
     } catch (e) {
       error.value = "Failed to fetch user";
       user.value = null;
-      console.error(e);
     } finally {
       loading.value = false;
     }

@@ -1,5 +1,8 @@
 <template>
-    <View :item="user ?? {}" :fields="fields" entity-name="User" :on-edit="onEdit" :on-delete="onDelete" />
+    <View v-if="user" :item="user" :fields="fields" entity-name="User" :on-edit="onEdit" :on-delete="onDelete" />
+    <div v-else class="flex items-center justify-center h-screen">
+        <UIcon name="i-heroicons-arrow-path" class="animate-spin" />
+    </div>
 </template>
 
 <script setup lang="ts">

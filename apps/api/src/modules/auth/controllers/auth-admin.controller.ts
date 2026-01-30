@@ -14,7 +14,6 @@ export class AuthAdminController {
     @UseGuards(AuthGuard('admin-local'))
     @Post(ADMIN_AUTH_ROUTES.LOGIN)
     async adminLogin(@Request() req): Promise<LoginResponseDto | BadRequestException> {
-        const response = await this.authService.login(req.user);
-        return response;
+        return this.authService.login(req.user);
     }
 }

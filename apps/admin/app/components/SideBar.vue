@@ -37,8 +37,8 @@ import type { NavigationMenuItem } from '@nuxt/ui'
 
 const { loggedIn, logout, user } = useAuth();
 
-const userName = computed(() => (user as any)?.value?.name ?? 'Admin');
-const userAvatar = computed(() => (user as any)?.value?.avatar ?? undefined);
+const userName = computed(() => (user)?.value?.name ?? 'Admin');
+const userAvatar = computed(() => (user)?.value?.avatar ?? undefined);
 
 const items = ref<NavigationMenuItem[][]>([
     [

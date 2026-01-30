@@ -1,6 +1,9 @@
 <template>
-    <Edit :item="user ?? {}" :fields="items" :schema="EditUserSchema" :saveFn="saveUser" redirect-to="/user"
+    <Edit v-if="user" :item="user" :fields="items" :schema="EditUserSchema" :saveFn="saveUser" redirect-to="/user"
         entity-name="User" />
+    <div v-else class="flex items-center justify-center h-screen">
+        <UIcon name="i-heroicons-arrow-path" class="animate-spin" />
+    </div>
 </template>
 
 <script setup lang="ts">

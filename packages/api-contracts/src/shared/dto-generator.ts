@@ -23,12 +23,12 @@ export function createDto<T extends z.ZodTypeAny>(
 export function createDtos<T extends Record<string, z.ZodTypeAny>>(
     schemas: T
 ): { [K in keyof T]: ReturnType<typeof createDto<T[K]>> } {
-    const dtos = {} as any;
+    const dtos: Record<string, ReturnType<typeof createDto>> = {};
 
     for (const [key, schema] of Object.entries(schemas)) {
         const className = key.replace(/Schema$/, 'Dto');
         dtos[key] = createDto(schema, className);
     }
 
-    return dtos;
+    return dtos as { [K in keyof T]: ReturnType<typeof createDto<T[K]>> };
 }

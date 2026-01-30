@@ -1,7 +1,7 @@
-import { CreateUserRequestSchema, UpdateUserRequestSchema } from "@pawspot/api-contracts";
+import { AdminUpdateUserRequestSchema, CreateUserRequestSchema } from "@pawspot/api-contracts";
 import type z from "zod";
 
-export const EditUserSchema = UpdateUserRequestSchema;
+export const EditUserSchema = AdminUpdateUserRequestSchema;
 export type EditUserValues = z.infer<typeof EditUserSchema>;
 
 export const CreateUserSchema = CreateUserRequestSchema;

@@ -1,15 +1,22 @@
 import { Injectable } from '@nestjs/common';
 import { CreateSanctuaryRequestDto, PaginatedResponse, QueryOptionsDto, SanctuariesListResponseDto, SanctuaryResponseDto, SignedUserDto, UpdateSanctuaryRequestDto } from '@pawspot/api-contracts';
+import { Sanctuary } from '@pawspot/db';
 import { PawSpotLogger } from 'src/common/logger/logger';
 import { AuditService } from 'src/modules/audit/services/audit.service';
 import { PrismaService } from 'src/modules/prisma/services/prisma.service';
-import { SearchService } from 'src/modules/prisma/services/search.service';
+import { PrismaQueryBuilderService } from 'src/modules/prisma/services/prisma-query-builder.service';
+
+const SANCTUARY_OMIT_FIELDS = { updatedAt: true, deletedAt: true, ownerId: true } as const;
+const SANCTUARY_INCLUDE_FIELDS = {
+    owner: { select: { id: true, email: true, name: true } },
+    contributors: { select: { id: true, email: true, name: true } },
+} as const;
 
 @Injectable()
 export class SanctuaryService {
     constructor(
         private prisma: PrismaService,
-        private searchService: SearchService,
+        private searchService: PrismaQueryBuilderService,
         private auditService: AuditService
     ) { }
 
@@ -19,10 +26,8 @@ export class SanctuaryService {
         this.logger.log(`Getting sanctuaries by location: ${location}`);
         return this.prisma.client.sanctuary.findMany({
             where: { location: { contains: location, mode: 'insensitive' } },
-            include: {
-                owner: true,
-                contributors: true,
-            }
+            omit: SANCTUARY_OMIT_FIELDS,
+            include: SANCTUARY_INCLUDE_FIELDS,
         });
     }
 
@@ -30,10 +35,8 @@ export class SanctuaryService {
         this.logger.log(`Getting sanctuary by id: ${id}`);
         return this.prisma.client.sanctuary.findUniqueOrThrow({
             where: { id },
-            include: {
-                owner: true,
-                contributors: true,
-            }
+            omit: SANCTUARY_OMIT_FIELDS,
+            include: SANCTUARY_INCLUDE_FIELDS,
         });
     }
 
@@ -62,10 +65,8 @@ export class SanctuaryService {
                     connect: contributorIds.map(id => ({ id }))
                 },
             },
-            include: {
-                owner: true,
-                contributors: true,
-            }
+            omit: SANCTUARY_OMIT_FIELDS,
+            include: SANCTUARY_INCLUDE_FIELDS,
         });
 
         await this.auditService.logAction(ownerId, `Created sanctuary: ${newSanctuary.id}${isAdmin ? '(admin)' : ''}`);
@@ -81,10 +82,7 @@ export class SanctuaryService {
 
         const existingSanctuary = await this.prisma.client.sanctuary.findUniqueOrThrow({
             where: { id },
-            include: {
-                owner: true,
-                contributors: true,
-            }
+            include: SANCTUARY_INCLUDE_FIELDS,
         });
 
         const updatedSanctuary = await this.prisma.client.sanctuary.update({
@@ -96,10 +94,8 @@ export class SanctuaryService {
                     set: sanctuary.contributors.map(contributorId => ({ id: contributorId }))
                 } : undefined,
             },
-            include: {
-                owner: true,
-                contributors: true,
-            }
+            omit: SANCTUARY_OMIT_FIELDS,
+            include: SANCTUARY_INCLUDE_FIELDS,
         });
         return updatedSanctuary;
     }
@@ -124,7 +120,10 @@ export class SanctuaryService {
 
     async search(query: QueryOptionsDto<SanctuaryResponseDto>): Promise<PaginatedResponse<SanctuaryResponseDto>> {
         this.logger.log(`Searching sanctuaries with query: ${JSON.stringify(query)}`);
-        return this.searchService.search<SanctuaryResponseDto>('sanctuary', query);
+        return this.searchService.search<SanctuaryResponseDto>('sanctuary', query, {
+            omit: SANCTUARY_OMIT_FIELDS,
+            include: SANCTUARY_INCLUDE_FIELDS,
+        });
     }
 
     async join(sanctuaryId: string, user: SignedUserDto) {

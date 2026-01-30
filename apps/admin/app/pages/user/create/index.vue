@@ -12,7 +12,6 @@ const userStore = useUserStore()
 const router = useRouter()
 
 const onCreated = async (values: CreateUserRequest) => {
-    console.log('User created with values:', values)
     const createdItem = await userStore.createUser(values)
     router.push(`/user/${createdItem.id}`)
 }

@@ -45,7 +45,7 @@ const { handleSubmit, errors, defineField, setFieldError, setErrors } = useForm(
 
 const formValues = reactive<Record<string, any>>({})
 for (const field of props.fields) {
-    const [value] = defineField(field.accessorKey as any)
+    const [value] = defineField(field.accessorKey)
     formValues[field.accessorKey as string] = value
 }
 
@@ -65,8 +65,7 @@ const onSubmit = handleSubmit(async (values) => {
 
 
 const submitHandler = (e?: Event) => {
-    console.log('Submitting form...')
-    void onSubmit(e as any)
+    void onSubmit(e)
 }
 
 const onCancel = () => {

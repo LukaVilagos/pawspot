@@ -1,7 +1,7 @@
-import { RegoisterUserRequestSchema } from "@pawspot/api-contracts";
+import { RegisterUserRequestSchema } from "@pawspot/api-contracts";
 import z from "zod";
 
-export const RegisterFormSchema = RegoisterUserRequestSchema.extend({
+export const RegisterFormSchema = RegisterUserRequestSchema.extend({
     confirmPassword: z.string().min(6),
 }).refine((data) => data.password === data.confirmPassword, {
     path: ['confirmPassword'],

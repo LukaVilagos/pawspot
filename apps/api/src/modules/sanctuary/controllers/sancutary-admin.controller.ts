@@ -36,7 +36,7 @@ export class SanctuaryAdminController {
     }
 
     @ZodSerializerDto(PaginatedSanctuaryResponseDto)
-    @Get(SANCTUARY_ADMIN_ROUTES.SEARCH)
+    @Post(SANCTUARY_ADMIN_ROUTES.SEARCH)
     async findAll(@Query() query: QueryOptionsDto<SanctuaryResponseDto>): Promise<PaginatedSanctuaryResponseDto> {
         return this.sanctuaryService.search(query);
     }

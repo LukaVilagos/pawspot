@@ -3,35 +3,31 @@ import { UserSummarySchema } from "../user";
 import { createZodDto } from "nestjs-zod";
 import { PaginatedResponseSchema } from "../../shared";
 
-// ============================================================================
-// REQUEST SCHEMAS
-// ============================================================================
-
-export const CreateSanctuaryRequestSchema = z.object({
-  name: z.string(),
-  location: z.string(),
+export const CreateSanctuaryRequestSchema = z.strictObject({
+  name: z.string().min(1, 'Name is required'),
+  location: z.string().min(1, 'Location is required'),
   ownerId: z.string().optional(),
   contributors: z.array(z.string()).optional(),
 });
 
-export const UpdateSanctuaryRequestSchema = z.object({
-  name: z.string().optional(),
-  location: z.string().optional(),
+export const UpdateSanctuaryRequestSchema = z.strictObject({
+  name: z.string().min(1, 'Name cannot be empty').optional(),
+  location: z.string().min(1, 'Location cannot be empty').optional(),
   ownerId: z.string().optional(),
   contributors: z.array(z.string()).optional(),
 });
 
-// ============================================================================
-// RESPONSE SCHEMAS
-// ============================================================================
-
-export const SanctuaryResponseSchema = z.object({
+export const SanctuaryResponseSchema = z.strictObject({
   id: z.string(),
-  createdAt: z.date(),
+  createdAt: z.coerce.date(),
   name: z.string(),
   location: z.string(),
-  owner: UserSummarySchema,
-  contributors: z.array(UserSummarySchema),
+  get owner(): z.ZodNullable<typeof UserSummarySchema> {
+    return z.nullable(UserSummarySchema);
+  },
+  get contributors(): z.ZodArray<typeof UserSummarySchema> {
+    return z.array(UserSummarySchema);
+  }
 });
 
 export const SanctuarySummarySchema = SanctuaryResponseSchema.pick({
@@ -42,10 +38,6 @@ export const SanctuarySummarySchema = SanctuaryResponseSchema.pick({
 
 export const SanctuariesListResponseSchema = z.array(SanctuaryResponseSchema);
 export const PaginatedSanctuaryResponseSchema = PaginatedResponseSchema(SanctuaryResponseSchema);
-
-// ============================================================================
-// TYPE EXPORTS
-// ============================================================================
 
 export type SanctuaryResponse = z.infer<typeof SanctuaryResponseSchema>;
 export type SanctuariesListResponse = z.infer<
@@ -58,10 +50,6 @@ export type CreateSanctuaryRequest = z.infer<
 export type UpdateSanctuaryRequest = z.infer<
   typeof UpdateSanctuaryRequestSchema
 >;
-
-// ============================================================================
-// DTO EXPORTS (for NestJS)
-// ============================================================================
 
 export class SanctuaryResponseDto extends createZodDto(
   SanctuaryResponseSchema

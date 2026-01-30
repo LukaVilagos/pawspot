@@ -49,11 +49,5 @@ export const prisma = new PrismaClient().$extends({
                 return query(args);
             }
         },
-        user: {
-            async findMany({ args, query }) {
-                args.omit = { ...args.omit, password: true };
-                return query(args);
-            }
-        },
     },
 });

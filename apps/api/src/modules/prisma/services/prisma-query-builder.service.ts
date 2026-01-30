@@ -1,7 +1,7 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { PaginatedResponse, QueryOptionsDto, FilterOperator, FilterEntry } from '@pawspot/api-contracts';
 import { PrismaService } from 'src/modules/prisma/services/prisma.service';
-import { Prisma } from '@pawspot/db';
+import { z, ZodTypeAny, ZodObject, ZodArray, ZodOptional, ZodNullable, ZodDefault, ZodLazy } from 'zod';
 
 type PrimitiveValue = string | number | boolean | bigint | Date | null | undefined | symbol;
 
@@ -12,22 +12,27 @@ interface FilterConditionObject {
 }
 
 type FilterValue = PrimitiveValue | FilterConditionObject;
-
 type PrismaWhereClause = Record<string, unknown>;
 type PrismaOrderByClause = Record<string, unknown>;
 
 interface ModelClient {
-    findMany: (args: Prisma.UserFindManyArgs) => Promise<unknown[]>;
+    findMany: (args: Record<string, unknown>) => Promise<unknown[]>;
     count: (args: { where?: PrismaWhereClause }) => Promise<number>;
 }
 
+interface SearchOptions {
+    omit?: Record<string, boolean>;
+    include?: Record<string, boolean | object>;
+}
+
 @Injectable()
-export class SearchService {
+export class PrismaQueryBuilderService {
     constructor(private prisma: PrismaService) { }
 
     async search<T>(
         model: string,
         query: QueryOptionsDto<T>,
+        options?: SearchOptions,
     ): Promise<PaginatedResponse<T>> {
         const { sort = [], filter = [], page = 1, limit = 10 } = query;
 
@@ -37,23 +42,24 @@ export class SearchService {
 
         const total = await modelClient.count({ where });
 
-        const findArgs = {
+        const findArgs: Record<string, unknown> = {
             where,
             orderBy: orderBy && orderBy.length > 0 ? orderBy : undefined,
             skip: Math.max(0, (page - 1) * limit),
             take: limit,
         };
 
-        const items = await modelClient.findMany(findArgs) as T[];
+        if (options?.omit) {
+            findArgs.omit = options.omit;
+        }
+        if (options?.include) {
+            findArgs.include = options.include;
+        }
+
+        const items = (await modelClient.findMany(findArgs)) as T[];
         const totalPages = limit > 0 ? Math.ceil(total / limit) : 1;
 
-        return {
-            items,
-            total,
-            page,
-            limit,
-            totalPages,
-        };
+        return { items, total, page, limit, totalPages };
     }
 
     private getModelClient(model: string): ModelClient {
@@ -64,11 +70,13 @@ export class SearchService {
         return client as ModelClient;
     }
 
-    private buildOrderBy(sort: { key: string; order: 'asc' | 'desc' }[] | undefined): PrismaOrderByClause[] | undefined {
+    private buildOrderBy(
+        sort: { key: string; order: 'asc' | 'desc' }[] | undefined
+    ): PrismaOrderByClause[] | undefined {
         if (!sort || sort.length === 0) return undefined;
 
         return sort
-            .map(s => {
+            .map((s) => {
                 const path = s.key.split('.').filter(Boolean);
                 if (path.length === 0) return undefined;
                 if (path.length === 1) return { [path[0]]: s.order };
@@ -122,7 +130,7 @@ export class SearchService {
             return v;
         };
 
-        if (typeof rawVal !== 'object' || rawVal === null || rawVal === undefined) {
+        if (typeof rawVal !== 'object' || rawVal === null) {
             return { [key]: normalizeValue(rawVal) };
         }
 
@@ -162,5 +170,44 @@ export class SearchService {
         }
 
         return { [key]: normalizeValue(rawVal) };
+    }
+
+    buildPrismaSelect(schema: ZodTypeAny): Record<string, any> {
+        const unwrapped = this.internalUnwrap(schema);
+        if (unwrapped instanceof z.ZodObject) {
+            const shape = (unwrapped as ZodObject<any>).shape;
+            const select: Record<string, any> = {};
+            for (const [key, value] of Object.entries(shape)) {
+                const field = this.internalUnwrap(value as ZodTypeAny);
+                if (field instanceof z.ZodObject) {
+                    select[key] = { select: this.buildPrismaSelect(field) };
+                } else if (field instanceof z.ZodArray) {
+                    const arr = field as ZodArray<ZodTypeAny>;
+                    const element = this.internalUnwrap((arr as any).def?.type ?? (arr as any).def?.innerType ?? (arr as any).element ?? (arr as any)._def?.type);
+                    if (element instanceof z.ZodObject) {
+                        select[key] = { select: this.buildPrismaSelect(element) };
+                    } else {
+                        select[key] = true;
+                    }
+                } else {
+                    select[key] = true;
+                }
+            }
+            return select;
+        }
+        return {};
+    }
+
+    private internalUnwrap(schema: ZodTypeAny): ZodTypeAny {
+        if (schema instanceof ZodOptional || schema instanceof ZodNullable || schema instanceof ZodDefault) {
+            const inner = (schema as any).def?.innerType ?? (schema as any).def?.type ?? (schema as any)._def?.innerType ?? (schema as any)._def?.type;
+            return inner ? this.internalUnwrap(inner) : schema;
+        }
+        if (schema instanceof ZodLazy) {
+            const getter = (schema as any).def?.getter ?? (schema as any)._def?.getter;
+            const inner = typeof getter === 'function' ? getter() : undefined;
+            return inner ? this.internalUnwrap(inner) : schema;
+        }
+        return schema;
     }
 }

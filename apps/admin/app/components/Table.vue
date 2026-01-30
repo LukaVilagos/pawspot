@@ -5,9 +5,10 @@
       <div>
         <div v-if="showFilter" class="flex gap-2 items-center px-4 py-2.5 border-b border-accented overflow-x-auto">
           <div class="flex gap-2 flex-1">
-            <template v-for="col in columns" :key="col.accessorKey">
-              <FilterInput v-if="col.filter" :filter-config="col.filter" :label="col.header" :field="col.accessorKey"
-                :id="col.accessorKey" :model-value="getFilterValueFromURL(col.accessorKey)"
+            <template v-for="col in columns" :key="`filter-${col.accessorKey}`">
+              <FilterInput v-if="col.filter" :key="`filter-input-${col.accessorKey}`" :filter-config="col.filter"
+                :label="col.header" :field="col.accessorKey" :id="col.accessorKey"
+                :model-value="getFilterValueFromURL(col.accessorKey)"
                 @update="(value: FilterValue) => setFilterValue(col.accessorKey, value)" size="sm" />
             </template>
           </div>
@@ -17,7 +18,13 @@
             @click="clearAllSorting" />
         </div>
         <UTable ref="table" :data="data" :columns="tableColumns" :sticky="sticky" :loading="loading"
-          class="flex-1 w-full" :ui="{ base: 'table-fixed' }" />
+          class="flex-1 w-full" :ui="{ base: 'table-fixed' }">
+          <template #empty>
+            <div class="py-6 text-center text-sm text-muted">
+              No data
+            </div>
+          </template>
+        </UTable>
 
         <DeleteItemModal v-model="showDelete" :item-name="entityName" @confirm="onConfirmDelete" />
         <div class="flex flex-row justify-center">
@@ -187,7 +194,7 @@ onMounted(() => {
 onMounted(async () => {
   const hasUrlParams = route.query.filters || route.query.sort || route.query.page
 
-  if (!hasUrlParams && !props.data.length) {
+  if (!hasUrlParams) {
     await props.loadData({ page: 1, limit: PAGE_SIZE })
   }
 })
@@ -338,18 +345,23 @@ watch(
   { deep: true }
 )
 
-const table = ref()
-
 async function onConfirmDelete() {
   if (!selectedDeleteId.value) return
 
   try {
     const success = await props.deleteMethod(selectedDeleteId.value)
-    // Optionally reload data if deletion succeeded
     if (success) {
-      // rebuild current payload and load
+      const currentPage = Number(route.query.page) || props.page || 1
+      const isLastItemOnPage = props.data.length === 1
+      const shouldGoToPreviousPage = isLastItemOnPage && currentPage > 1
+
       const payload = buildFilterPayload()
-      payload.page = Number(route.query.page) || props.page || 1
+      payload.page = shouldGoToPreviousPage ? currentPage - 1 : currentPage
+
+      if (shouldGoToPreviousPage) {
+        updateURL(payload)
+      }
+
       await props.loadData(payload)
     }
   } catch (e) {

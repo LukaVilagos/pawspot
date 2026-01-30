@@ -1,12 +1,13 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards, UsePipes } from '@nestjs/common';
 import { AuthGuard } from 'src/modules/auth/guards/auth.guard';
-import { ADMIN_USER_ROUTES, CreateUserRequestDto, PaginatedUserResponseDto, QueryOptionsDto, UpdateUserRequestDto, UserResponseDto } from '@pawspot/api-contracts';
+import { ADMIN_USER_ROUTES, AdminUpdateUserRequestDto, CreateUserRequestDto, PaginatedUserResponseDto, QueryOptionsDto, UserResponseDto } from '@pawspot/api-contracts';
 import { UserService } from '../services/user.service';
 import { AdminGuard } from 'src/modules/auth/guards/admin.guard';
-import { ZodSerializerDto } from 'nestjs-zod';
+import { ZodSerializerDto, ZodValidationPipe } from 'nestjs-zod';
 
 @Controller(ADMIN_USER_ROUTES.ROOT)
 @UseGuards(AuthGuard, AdminGuard)
+@UsePipes(ZodValidationPipe)
 export class UserAdminController {
     constructor(private readonly userService: UserService) { }
 
@@ -24,7 +25,7 @@ export class UserAdminController {
 
     @ZodSerializerDto(UserResponseDto)
     @Put(ADMIN_USER_ROUTES.UPDATE)
-    async updateUser(@Param('id') id: string, @Body() user: UpdateUserRequestDto): Promise<UserResponseDto> {
+    async updateUser(@Param('id') id: string, @Body() user: AdminUpdateUserRequestDto): Promise<UserResponseDto> {
         return this.userService.update(id, user);
     }
 
