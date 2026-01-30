@@ -70,18 +70,14 @@ const rangeToRef = ref<HTMLInputElement | null>(null)
 const hasFocus = ref(false)
 
 onMounted(() => {
-  console.log('🎬 [CustomizableInput] Mounted', { label: props.label, type: props.type })
-
   nextTick(() => {
     const input = getInputElement()
     if (input) {
-      console.log('📍 [CustomizableInput] Setting up focus listeners', { label: props.label })
       input.addEventListener('focus', handleFocus)
       input.addEventListener('blur', handleBlur)
 
       const shouldFocus = sessionStorage.getItem(`focus-${props.label}`)
       if (shouldFocus === 'true') {
-        console.log('🔄 [CustomizableInput] Restoring focus from sessionStorage', { label: props.label })
         input.focus()
       }
     }
@@ -89,8 +85,6 @@ onMounted(() => {
 })
 
 onBeforeUnmount(() => {
-  console.log('💀 [CustomizableInput] Unmounting', { label: props.label, hasFocus: hasFocus.value })
-
   if (hasFocus.value) {
     sessionStorage.setItem(`focus-${props.label}`, 'true')
   } else {
@@ -117,25 +111,15 @@ function getInputElement(): HTMLInputElement | null {
 }
 
 function handleFocus() {
-  console.log('👁️ [CustomizableInput] Focus gained', { label: props.label })
   hasFocus.value = true
 }
 
 function handleBlur() {
-  console.log('👁️ [CustomizableInput] Focus lost', { label: props.label })
   hasFocus.value = false
 }
 
 watch(() => props.modelValue, (v, oldV) => {
-  console.log('🔍 [CustomizableInput] Watch triggered', {
-    type: props.type,
-    label: props.label,
-    newValue: v,
-    oldValue: oldV
-  })
-
   if (JSON.stringify(v) === JSON.stringify(oldV)) {
-    console.log('⏭️  [CustomizableInput] Skipping - values are equal')
     return
   }
 
