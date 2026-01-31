@@ -43,6 +43,8 @@ export const UserSummarySchema = UserResponseSchema.pick({
   id: true,
   email: true,
   name: true,
+}).extend({
+  deletedAt: z.coerce.date().nullable().optional(),
 });
 
 export const SignedUserSchema = UserResponseSchema.pick({

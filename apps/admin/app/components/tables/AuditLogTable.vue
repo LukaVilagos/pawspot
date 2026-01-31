@@ -54,12 +54,28 @@ async function loadAuditLogs(query: QueryOptions<AuditLogResponse>): Promise<voi
 const baseColumns: TypedTableColumn<AuditLogResponse>[] = [
     createIdColumn<AuditLogResponse>('20%'),
     createTextColumn<AuditLogResponse>('action', 'Action', '30%'),
-    createLinkColumn<AuditLogResponse>('user', 'User', '25%', {
-        href: (row) => row.user ? `/user/${row.user.id}` : '',
-        label: (row) => row.user?.name || row.user?.email || '-',
+    {
+        accessorKey: 'user' as keyof AuditLogResponse & string,
+        header: 'User',
+        sortable: true,
+        filter: { type: 'text', nestedKey: 'user.name' },
         sortKey: 'user.name',
-        nestedFilterKey: 'user.name'
-    }),
+        cell: (ctx) => {
+            const user = ctx.cell.row.original.user
+            if (!user) return '-'
+            const label = user.name || user.email || '-'
+            if (user.deletedAt) {
+                return h('span', { class: 'text-muted' }, `${label} (deleted)`)
+            }
+            return h(resolveComponent('NuxtLink'), { to: `/user/${user.id}`, class: 'text-primary hover:underline' }, () => label)
+        },
+        meta: {
+            style: {
+                th: 'width: 25%',
+                td: 'width: 25%'
+            }
+        }
+    },
     createCreatedAtColumn<AuditLogResponse>('25%')
 ]
 

@@ -6,7 +6,7 @@ import { PrismaQueryBuilderService } from 'src/modules/prisma/services/prisma-qu
 
 const AUDIT_LOG_OMIT_FIELDS = { updatedAt: true, deletedAt: true, userId: true } as const;
 const AUDIT_LOG_INCLUDE_FIELDS = {
-    user: { select: { id: true, email: true, name: true } },
+    user: { select: { id: true, email: true, name: true, deletedAt: true } },
 } as const;
 
 @Injectable()
