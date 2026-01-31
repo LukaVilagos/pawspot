@@ -4,7 +4,7 @@
             :links="headerLinks" />
 
         <UPageBody>
-            <div>
+            <div class="space-y-4">
                 <FieldDisplay v-for="field in props.fields" :key="String(field.accessorKey)" :field="field"
                     :value="props.item[String(field.accessorKey)]" />
             </div>

@@ -25,7 +25,7 @@ const onDelete = async () => {
 const fields: PageItem<UserResponse>[] = [
     { accessorKey: 'email', header: 'Email', type: 'text' },
     { accessorKey: 'name', header: 'Name', type: 'text' },
-    { accessorKey: 'createdAt', header: 'Created At', type: 'date' },
+    { accessorKey: 'createdAt', header: 'Created At', type: 'text' },
     { accessorKey: "type", header: "Type", type: "text" },
 ]
 </script>

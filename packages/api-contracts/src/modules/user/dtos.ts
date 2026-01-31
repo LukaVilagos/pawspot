@@ -49,7 +49,7 @@ export const SignedUserSchema = UserResponseSchema.pick({
   id: true,
   email: true,
   type: true,
-})
+}).passthrough()
 
 export const AuthUserSchema = UserResponseSchema.pick({
   id: true,

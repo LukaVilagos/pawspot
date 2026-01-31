@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards } from '@nestjs/common';
 import { CreateSanctuaryRequestDto, PaginatedSanctuaryResponseDto, QueryOptionsDto, SANCTUARY_ADMIN_ROUTES, SanctuaryResponseDto, SignedUserDto, UpdateSanctuaryRequestDto } from '@pawspot/api-contracts';
 import { SanctuaryService } from '../services/sanctuary.service';
 import { ZodSerializerDto } from 'nestjs-zod';
@@ -37,7 +37,7 @@ export class SanctuaryAdminController {
 
     @ZodSerializerDto(PaginatedSanctuaryResponseDto)
     @Post(SANCTUARY_ADMIN_ROUTES.SEARCH)
-    async findAll(@Query() query: QueryOptionsDto<SanctuaryResponseDto>): Promise<PaginatedSanctuaryResponseDto> {
+    async findAll(@Body() query: QueryOptionsDto<SanctuaryResponseDto>): Promise<PaginatedSanctuaryResponseDto> {
         return this.sanctuaryService.search(query);
     }
 }

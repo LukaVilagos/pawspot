@@ -7,6 +7,8 @@ import { APP_FILTER, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
 import { ZodSerializerInterceptor, ZodValidationPipe } from 'nestjs-zod';
 import { AuditModule } from './modules/audit/modules/audit.module';
 import { SanctuaryModule } from './modules/sanctuary/modules/sanctuary.module';
+import { AnimalModule } from './modules/animal/modules/animal.module';
+import { PostModule } from './modules/post/modules/post.module';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { DateFormatInterceptor } from './common/interceptors/date-format.interceptor';
 
@@ -18,6 +20,8 @@ import { DateFormatInterceptor } from './common/interceptors/date-format.interce
     AuthModule,
     AuditModule,
     SanctuaryModule,
+    AnimalModule,
+    PostModule,
   ],
   controllers: [],
   providers: [{

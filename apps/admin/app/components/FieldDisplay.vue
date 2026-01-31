@@ -14,8 +14,14 @@
             <template v-else-if="field.type === 'password'">
                 ********
             </template>
+            <template v-else-if="field.href">
+                <NuxtLink :to="field.href"
+                    class="text-primary hover:text-primary/80 hover:underline cursor-pointer transition-colors">
+                    {{ value || '-' }}
+                </NuxtLink>
+            </template>
             <template v-else>
-                {{ value }}
+                {{ value || '-' }}
             </template>
         </div>
     </div>

@@ -1,0 +1,16 @@
+meta {
+  name: delete
+  type: http
+  seq: 1
+}
+
+delete {
+  url: {{apiUrl}}/{{root}}/{{postId}}
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

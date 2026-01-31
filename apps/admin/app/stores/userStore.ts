@@ -137,16 +137,24 @@ export const useUserStore = defineStore('user', () => {
         }
     }
 
+    async function fetchUsers() {
+        return searchUsers({ page: 1, limit: 1000 })
+    }
+
+    const users = computed(() => searchResult.value.items)
+
     return {
         isLoading,
         hasInitiallyLoaded,
         error,
         user,
+        users,
         searchResult,
         lastQuery,
         setUser,
         setSearchResult,
         fetchUserById,
+        fetchUsers,
         createUser,
         updateUser,
         deleteUser,

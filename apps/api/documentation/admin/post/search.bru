@@ -1,0 +1,23 @@
+meta {
+  name: search
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{apiUrl}}/{{root}}/search
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "limit": 10,
+    "page": 1
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

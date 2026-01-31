@@ -1,8 +1,8 @@
 <template>
 	<UForm @submit="submitHandler">
 		<UPage>
-			<UPageHeader headline="Edit Item" :title="entityName" description="Modify the fields below"
-				:links="headerLinks" />
+			<UPageHeader v-if="showHeader" :headline="computedHeadline" :title="computedTitle"
+				:description="computedDescription" :links="headerLinks" />
 			<UPageBody>
 				<div v-if="errors._global" class="text-red-500 text-sm">
 					{{ errors._global }}
@@ -26,6 +26,8 @@ import type z from 'zod';
 import type { PageItem } from '~/types/PageItem'
 import type { ButtonProps } from '@nuxt/ui'
 
+const route = useRoute()
+
 const props = withDefaults(defineProps<{
 	fields: PageItem<any>[]
 	item: Record<string, any>
@@ -34,6 +36,10 @@ const props = withDefaults(defineProps<{
 	saveFn: (id: string | number | undefined, payload: Record<string, any>) => Promise<any>
 	redirectTo?: string
 	idAccessor?: string
+	showHeader?: boolean
+	headline?: string
+	title?: string
+	description?: string
 }>(), {
 	fields: () => [],
 	item: () => ({}),
@@ -41,8 +47,21 @@ const props = withDefaults(defineProps<{
 	idAccessor: 'id',
 	saveFn: async () => {
 		throw new Error('saveFn not provided')
-	}
+	},
+	showHeader: true,
+	headline: 'Edit Item',
+	title: undefined,
+	description: 'Modify the fields below'
 })
+
+const returnUrl = computed(() => {
+	const url = route.query.returnUrl
+	return typeof url === 'string' ? url : undefined
+})
+
+const computedHeadline = computed(() => props.headline)
+const computedTitle = computed(() => props.title ?? props.entityName)
+const computedDescription = computed(() => props.description)
 
 const emit = defineEmits<{
 	(e: 'cancel'): void
@@ -77,7 +96,8 @@ const onSubmit = handleSubmit(async (values) => {
 	try {
 		await props.saveFn(id, values)
 		emit('saved', { id, ...values })
-		if (props.redirectTo) await router.push(props.redirectTo)
+		const redirectTarget = returnUrl.value || props.redirectTo
+		if (redirectTarget) await router.push(redirectTarget)
 	} catch (err: any) {
 		if (err?.field && err?.message) {
 			setFieldError(String(err.field), String(err.message))
@@ -101,7 +121,8 @@ const submitHandler = (e?: Event) => {
 
 const onCancel = () => {
 	emit('cancel')
-	if (props.redirectTo) router.push(props.redirectTo)
+	const redirectTarget = returnUrl.value || props.redirectTo
+	if (redirectTarget) router.push(redirectTarget)
 }
 
 const headerLinks = ref<ButtonProps[]>([

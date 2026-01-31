@@ -17,6 +17,11 @@
         <USelect v-model="innerValue" :items="options" :size="size" :placeholder="placeholder" />
       </template>
 
+      <template v-else-if="type === 'select-search'">
+        <USelectMenu v-model="innerValue" :items="options" :searchable="true" value-key="value" :size="size"
+          :placeholder="placeholder" />
+      </template>
+
       <template v-else-if="type === 'boolean'">
         <UCheckbox v-model="innerValue" />
       </template>

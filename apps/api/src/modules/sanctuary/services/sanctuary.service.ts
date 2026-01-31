@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { CreateSanctuaryRequestDto, PaginatedResponse, QueryOptionsDto, SanctuariesListResponseDto, SanctuaryResponseDto, SignedUserDto, UpdateSanctuaryRequestDto } from '@pawspot/api-contracts';
-import { Sanctuary } from '@pawspot/db';
 import { PawSpotLogger } from 'src/common/logger/logger';
 import { AuditService } from 'src/modules/audit/services/audit.service';
 import { PrismaService } from 'src/modules/prisma/services/prisma.service';
@@ -10,7 +9,14 @@ const SANCTUARY_OMIT_FIELDS = { updatedAt: true, deletedAt: true, ownerId: true 
 const SANCTUARY_INCLUDE_FIELDS = {
     owner: { select: { id: true, email: true, name: true } },
     contributors: { select: { id: true, email: true, name: true } },
+    animals: { select: { id: true, name: true, species: true } },
+    Post: { select: { id: true, title: true } },
 } as const;
+
+const transformSanctuaryResponse = (sanctuary: any): any => {
+    const { Post, ...rest } = sanctuary;
+    return { ...rest, posts: Post };
+};
 
 @Injectable()
 export class SanctuaryService {
@@ -24,20 +30,22 @@ export class SanctuaryService {
 
     async findByLocation(location: string): Promise<SanctuariesListResponseDto> {
         this.logger.log(`Getting sanctuaries by location: ${location}`);
-        return this.prisma.client.sanctuary.findMany({
+        const sanctuaries = await this.prisma.client.sanctuary.findMany({
             where: { location: { contains: location, mode: 'insensitive' } },
             omit: SANCTUARY_OMIT_FIELDS,
             include: SANCTUARY_INCLUDE_FIELDS,
         });
+        return sanctuaries.map(transformSanctuaryResponse);
     }
 
     async findById(id: string): Promise<SanctuaryResponseDto> {
         this.logger.log(`Getting sanctuary by id: ${id}`);
-        return this.prisma.client.sanctuary.findUniqueOrThrow({
+        const sanctuary = await this.prisma.client.sanctuary.findUniqueOrThrow({
             where: { id },
             omit: SANCTUARY_OMIT_FIELDS,
             include: SANCTUARY_INCLUDE_FIELDS,
         });
+        return transformSanctuaryResponse(sanctuary);
     }
 
     async create(sanctuary: CreateSanctuaryRequestDto, user?: SignedUserDto, isAdmin: boolean = false): Promise<SanctuaryResponseDto> {
@@ -70,7 +78,7 @@ export class SanctuaryService {
         });
 
         await this.auditService.logAction(ownerId, `Created sanctuary: ${newSanctuary.id}${isAdmin ? '(admin)' : ''}`);
-        return newSanctuary;
+        return transformSanctuaryResponse(newSanctuary);
     }
 
     async update(id: string, sanctuary: UpdateSanctuaryRequestDto, user?: SignedUserDto, isAdmin: boolean = false): Promise<SanctuaryResponseDto> {
@@ -97,7 +105,7 @@ export class SanctuaryService {
             omit: SANCTUARY_OMIT_FIELDS,
             include: SANCTUARY_INCLUDE_FIELDS,
         });
-        return updatedSanctuary;
+        return transformSanctuaryResponse(updatedSanctuary);
     }
 
     async delete(id: string, user: SignedUserDto, isAdmin: boolean = false) {
@@ -120,10 +128,14 @@ export class SanctuaryService {
 
     async search(query: QueryOptionsDto<SanctuaryResponseDto>): Promise<PaginatedResponse<SanctuaryResponseDto>> {
         this.logger.log(`Searching sanctuaries with query: ${JSON.stringify(query)}`);
-        return this.searchService.search<SanctuaryResponseDto>('sanctuary', query, {
+        const result = await this.searchService.search<any>('sanctuary', query, {
             omit: SANCTUARY_OMIT_FIELDS,
             include: SANCTUARY_INCLUDE_FIELDS,
         });
+        return {
+            ...result,
+            items: result.items.map(transformSanctuaryResponse),
+        };
     }
 
     async join(sanctuaryId: string, user: SignedUserDto) {

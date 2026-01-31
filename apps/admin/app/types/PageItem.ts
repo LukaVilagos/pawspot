@@ -8,4 +8,5 @@ export type PageItem<T> = {
     component?: any
     componentProps?: Record<string, any>
     useDefaultOption?: boolean
+    href?: string
 }
