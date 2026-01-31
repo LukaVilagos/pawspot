@@ -47,6 +47,7 @@ const items = ref<NavigationMenuItem[][]>([
         { label: 'Sanctuaries', to: '/sanctuary', icon: 'i-lucide-map-pin' },
         { label: 'Animals', to: '/animal', icon: 'i-mdi-paw' },
         { label: 'Posts', to: '/post', icon: 'i-lucide-file-text' },
+        { label: 'Audit Logs', to: '/audit-log', icon: 'i-lucide-scroll-text' },
     ],
 ])
 </script>
