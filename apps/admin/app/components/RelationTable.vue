@@ -4,10 +4,11 @@
             :total="total" :page="page" :entity-name="entityName" :load-data="loadData" :show-header="false"
             :show-create-button="canAdd" :show-actions="showActions" variant="relation" :title="title"
             :empty-message="emptyMessage" :delete-item-name="removeItemName" :on-row-delete="handleRemove"
-            :loading="loading" :sync-url-state="false" :actions-u-r-l-base="actionsURLBase" :show-edit-action="false"
-            @create-click="openAddModal" @filter-change="handleFilterChange" />
+            :loading="loading" :sync-url-state="syncUrlState" :table-id="tableId" :actions-u-r-l-base="actionsURLBase"
+            :show-edit-action="false" @create-click="openAddModal" @filter-change="handleFilterChange" />
 
-        <UModal v-model:open="showAddModal" title="Add Item">
+        <UModal v-model:open="showAddModal" title="Add Item"
+            :description="`Search and add a ${entityName.toLowerCase()} to this list`">
             <template #body>
                 <div class="space-y-4">
                     <UFormField :label="searchLabel">
@@ -31,7 +32,7 @@
                             No results found
                         </p>
                         <p v-else class="absolute inset-0 flex items-center justify-center text-gray-400">
-                            Start typing to search
+                            No items available
                         </p>
                     </div>
                 </div>
@@ -70,6 +71,8 @@ interface Props {
     removeFn: (itemId: string) => Promise<void>
     removeItemName?: string
     loading?: boolean
+    tableId?: string
+    syncUrlState?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -84,6 +87,8 @@ const props = withDefaults(defineProps<Props>(), {
     loading: false,
     idKey: 'id',
     actionsURLBase: '',
+    tableId: '',
+    syncUrlState: true,
 })
 
 const showActions = computed(() => props.canRemove || props.canView)
@@ -131,10 +136,20 @@ function getDisplayValueFromResult(item: unknown): string {
     return getDisplayValue(item as T)
 }
 
-function openAddModal() {
+async function openAddModal() {
     searchQuery.value = ''
     searchResults.value = []
     showAddModal.value = true
+    await loadInitialResults()
+}
+
+async function loadInitialResults() {
+    isSearching.value = true
+    try {
+        searchResults.value = await props.searchFn('')
+    } finally {
+        isSearching.value = false
+    }
 }
 
 async function performSearch() {

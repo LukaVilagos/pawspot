@@ -4,7 +4,8 @@
         search-hint="Searching by email address" display-key="name" secondary-display-key="email" :show-filter="true"
         :page-size="10" entity-name="Contributor" :load-data="loadContributors" :search-fn="searchUsers"
         :add-fn="addContributor" :remove-fn="removeContributor" remove-item-name="Contributor" :loading="loading"
-        actions-u-r-l-base="/user" @added="onContributorAdded" @removed="onContributorRemoved" />
+        actions-u-r-l-base="/user" table-id="contributors" :sync-url-state="true" @added="onContributorAdded"
+        @removed="onContributorRemoved" />
 </template>
 
 <script setup lang="ts">
@@ -56,7 +57,9 @@ async function searchUsers(query: string): Promise<UserSummary[]> {
     const searchQuery: QueryOptions<UserResponse> = {
         page: 1,
         limit: 10,
-        filter: [['email', { op: 'contains', value: query }]],
+    }
+    if (query.trim()) {
+        searchQuery.filter = [['email', { op: 'contains', value: query }]]
     }
     const result = await userStore.searchUsers(searchQuery)
     return (

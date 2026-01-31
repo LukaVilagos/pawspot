@@ -38,7 +38,7 @@
         <DeleteItemModal v-model="showDelete" :item-name="computedDeleteItemName" @confirm="onConfirmDelete" />
         <div class="flex flex-row items-center justify-between mt-4 px-4">
           <span class="text-sm text-muted">Total: {{ total }} {{ entityName.toLowerCase() }}{{ total !== 1 ? 's' : ''
-          }}</span>
+            }}</span>
           <UPagination v-if="Math.ceil(total / pageSize) > 1" :page="page" :total="total" :items-per-page="pageSize"
             @update:page="handlePageChange" />
           <span v-else class="flex-1"></span>
@@ -121,7 +121,7 @@ const router = useRouter()
 const tableState = useTableState<T>({
   tableId: props.tableId,
   pageSize: props.pageSize,
-  syncWithUrl: props.syncUrlState && props.variant !== 'relation'
+  syncWithUrl: props.syncUrlState
 })
 
 const showDelete = ref(false)
@@ -190,10 +190,31 @@ const actionsColumn = computed<TableColumn<T>>(() => ({
 
 const NuxtLink = resolveComponent('NuxtLink')
 
+const columnWidthPercent = computed(() => {
+  const totalCols = props.columns.length + (props.showActions ? 1 : 0)
+  const actionsWidth = props.showActions ? 10 : 0
+  const remainingWidth = 100 - actionsWidth
+  return Math.floor(remainingWidth / props.columns.length)
+})
+
 const computedTableColumns = computed<TableColumn<T>[]>(() => {
-  const cols: TableColumn<T>[] = props.columns.map(col => {
+  const cols: TableColumn<T>[] = props.columns.map((col, index) => {
     const column: TableColumn<T> = {
       accessorKey: col.accessorKey as string,
+    }
+
+    const defaultWidthStyle = `width: ${columnWidthPercent.value}%`
+    if (!col.meta?.style?.th && !col.meta?.style?.td) {
+      column.meta = {
+        ...col.meta,
+        style: {
+          th: defaultWidthStyle,
+          td: defaultWidthStyle,
+          ...col.meta?.style
+        }
+      }
+    } else if (col.meta) {
+      column.meta = col.meta
     }
 
     if (col.link) {
@@ -232,10 +253,6 @@ const computedTableColumns = computed<TableColumn<T>[]>(() => {
       column.header = col.header
     }
 
-    if (col.meta) {
-      column.meta = col.meta
-    }
-
     return column
   })
 
@@ -248,25 +265,16 @@ const computedTableColumns = computed<TableColumn<T>[]>(() => {
 
 onMounted(() => {
   tableState.initializeFromURL()
-  nextTick(() => {
+  nextTick(async () => {
     tableState.finishInitialization()
-  })
-})
 
-onMounted(async () => {
-  if (props.variant === 'relation') {
-    return
-  }
-  if (props.syncUrlState) {
-    const route = useRoute()
-    const hasUrlParams = route.query[`${props.tableId ? props.tableId + '_' : ''}filters`] ||
-      route.query[`${props.tableId ? props.tableId + '_' : ''}sort`] ||
-      route.query[`${props.tableId ? props.tableId + '_' : ''}page`]
-
-    if (!hasUrlParams) {
+    if (props.syncUrlState) {
+      const payload = tableState.buildFilterPayload()
+      emit('filter-change', payload)
+    } else {
       await props.loadData({ page: 1, limit: props.pageSize })
     }
-  }
+  })
 })
 
 function handlePageChange(newPage: number) {
