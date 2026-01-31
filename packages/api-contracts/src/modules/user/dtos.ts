@@ -60,6 +60,7 @@ export const AuthUserSchema = UserResponseSchema.pick({
 });
 
 export const PaginatedUserResponseSchema = PaginatedResponseSchema(UserResponseSchema);
+export const PaginatedUserSummaryResponseSchema = PaginatedResponseSchema(UserSummarySchema);
 export const UsersListResponseSchema = z.array(UserResponseSchema);
 
 export type UserType = z.infer<typeof UserTypeSchema>;
@@ -70,6 +71,7 @@ export type CreateUserRequest = z.infer<typeof CreateUserRequestSchema>;
 export type UpdateUserRequest = z.infer<typeof UpdateUserRequestSchema>;
 export type AdminUpdateUserRequest = z.infer<typeof AdminUpdateUserRequestSchema>;
 export type PaginatedUserResponse = z.infer<typeof PaginatedUserResponseSchema>;
+export type PaginatedUserSummaryResponse = z.infer<typeof PaginatedUserSummaryResponseSchema>;
 export type SignedUser = z.infer<typeof SignedUserSchema>;
 export type AuthUser = z.infer<typeof AuthUserSchema>;
 
@@ -89,6 +91,9 @@ export class AdminUpdateUserRequestDto extends createZodDto(
 ) { }
 export class PaginatedUserResponseDto extends createZodDto(
   PaginatedUserResponseSchema
+) { }
+export class PaginatedUserSummaryResponseDto extends createZodDto(
+  PaginatedUserSummaryResponseSchema
 ) { }
 export class SignedUserDto extends createZodDto(
   SignedUserSchema

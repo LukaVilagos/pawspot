@@ -5,6 +5,9 @@ export const SANCTUARY_ADMIN_ROUTES = {
     UPDATE: ':id',
     DELETE: ':id',
     SEARCH: 'search',
+    ADD_CONTRIBUTOR: ':id/contributors',
+    REMOVE_CONTRIBUTOR: ':id/contributors',
+    SEARCH_CONTRIBUTORS: ':id/contributors/search',
 } as const;
 
 export const SANCTUARY_ROUTES = {

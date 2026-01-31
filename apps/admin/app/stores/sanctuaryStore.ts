@@ -4,6 +4,7 @@ import type {
     UpdateSanctuaryRequest,
     QueryOptions,
     PaginatedResponse,
+    UserSummary,
 } from '@pawspot/api-contracts'
 import { normalizeApiError } from '~/utils/error'
 import { invalidateStoreCache } from '~/utils/storeUtils'
@@ -143,6 +144,52 @@ export const useSanctuaryStore = defineStore('sanctuary', () => {
 
     const sanctuaries = computed(() => searchResult.value.items)
 
+    async function addContributor(sanctuaryId: string, userId: string) {
+        isLoading.value = true
+        error.value = null
+        try {
+            const api = useSanctuaryApi()
+            const data = await api.addContributor(sanctuaryId, userId)
+            if (data && sanctuary.value?.id === sanctuaryId) {
+                sanctuary.value = data
+            }
+            return data
+        } catch (e: any) {
+            error.value = e?.message ?? String(e)
+            throw normalizeApiError(e)
+        } finally {
+            isLoading.value = false
+        }
+    }
+
+    async function removeContributor(sanctuaryId: string, userId: string) {
+        isLoading.value = true
+        error.value = null
+        try {
+            const api = useSanctuaryApi()
+            const data = await api.removeContributor(sanctuaryId, userId)
+            if (data && sanctuary.value?.id === sanctuaryId) {
+                sanctuary.value = data
+            }
+            return data
+        } catch (e: any) {
+            error.value = e?.message ?? String(e)
+            throw normalizeApiError(e)
+        } finally {
+            isLoading.value = false
+        }
+    }
+
+    async function searchContributors(sanctuaryId: string, query: QueryOptions<UserSummary>) {
+        try {
+            const api = useSanctuaryApi()
+            return await api.searchContributors(sanctuaryId, query)
+        } catch (e: any) {
+            error.value = e?.message ?? String(e)
+            throw normalizeApiError(e)
+        }
+    }
+
     return {
         isLoading,
         hasInitiallyLoaded,
@@ -159,5 +206,8 @@ export const useSanctuaryStore = defineStore('sanctuary', () => {
         updateSanctuary,
         deleteSanctuary,
         searchSanctuaries,
+        addContributor,
+        removeContributor,
+        searchContributors,
     }
 })

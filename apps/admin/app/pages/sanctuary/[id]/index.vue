@@ -5,8 +5,8 @@
                 :links="headerLinks" />
             <UPageBody>
                 <div class="space-y-4">
-                    <FieldDisplay v-for="field in fields" :key="String(field.accessorKey)" :field="field"
-                        :value="displayItem[String(field.accessorKey)]" />
+                    <FieldDisplay v-for="field in fields" :key="field.accessorKey" :field="field"
+                        :value="displayItem[field.accessorKey]" />
                 </div>
 
                 <div class="mt-8">
@@ -20,10 +20,7 @@
                 </div>
 
                 <div class="mt-8">
-                    <h3 class="text-lg font-semibold mb-4">Contributors ({{ sanctuary.contributors?.length || 0 }})</h3>
-                    <UTable v-if="sanctuary.contributors?.length" :data="sanctuary.contributors"
-                        :columns="contributorColumns" />
-                    <p v-else class="text-gray-500">No contributors for this sanctuary.</p>
+                    <TablesContributorTable :sanctuary-id="sanctuary.id" />
                 </div>
             </UPageBody>
             <DeleteItemModal v-model="showDelete" item-name="Sanctuary" @confirm="onDelete" />
@@ -88,10 +85,4 @@ const fields = computed<PageItem<typeof displayItem.value>[]>(() => [
     },
     { accessorKey: 'createdAt', header: 'Created At', type: 'text' },
 ])
-
-const contributorColumns = [
-    { accessorKey: 'id', header: 'ID' },
-    { accessorKey: 'email', header: 'Email' },
-    { accessorKey: 'name', header: 'Name' },
-]
 </script>

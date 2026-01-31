@@ -1,5 +1,5 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards } from '@nestjs/common';
-import { CreateSanctuaryRequestDto, PaginatedSanctuaryResponseDto, QueryOptionsDto, SANCTUARY_ADMIN_ROUTES, SanctuaryResponseDto, SignedUserDto, UpdateSanctuaryRequestDto } from '@pawspot/api-contracts';
+import { ContributorRequestDto, CreateSanctuaryRequestDto, PaginatedSanctuaryResponseDto, PaginatedUserSummaryResponseDto, QueryOptionsDto, SANCTUARY_ADMIN_ROUTES, SanctuaryResponseDto, SignedUserDto, UpdateSanctuaryRequestDto, UserSummaryDto } from '@pawspot/api-contracts';
 import { SanctuaryService } from '../services/sanctuary.service';
 import { ZodSerializerDto } from 'nestjs-zod';
 import { User } from 'src/modules/user/decorators/user.decorator';
@@ -39,5 +39,23 @@ export class SanctuaryAdminController {
     @Post(SANCTUARY_ADMIN_ROUTES.SEARCH)
     async findAll(@Body() query: QueryOptionsDto<SanctuaryResponseDto>): Promise<PaginatedSanctuaryResponseDto> {
         return this.sanctuaryService.search(query);
+    }
+
+    @ZodSerializerDto(PaginatedUserSummaryResponseDto)
+    @Post(SANCTUARY_ADMIN_ROUTES.SEARCH_CONTRIBUTORS)
+    async searchContributors(@Param('id') id: string, @Body() query: QueryOptionsDto<UserSummaryDto>): Promise<PaginatedUserSummaryResponseDto> {
+        return this.sanctuaryService.searchContributors(id, query);
+    }
+
+    @ZodSerializerDto(SanctuaryResponseDto)
+    @Post(SANCTUARY_ADMIN_ROUTES.ADD_CONTRIBUTOR)
+    async addContributor(@Param('id') id: string, @Body() body: ContributorRequestDto): Promise<SanctuaryResponseDto> {
+        return this.sanctuaryService.addContributor(id, body.userId);
+    }
+
+    @ZodSerializerDto(SanctuaryResponseDto)
+    @Delete(SANCTUARY_ADMIN_ROUTES.REMOVE_CONTRIBUTOR)
+    async removeContributor(@Param('id') id: string, @Body() body: ContributorRequestDto): Promise<SanctuaryResponseDto> {
+        return this.sanctuaryService.removeContributor(id, body.userId);
     }
 }

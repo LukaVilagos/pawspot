@@ -1,6 +1,7 @@
 import { PaginatedResponse, QueryOptions } from "../../shared";
 import { CreateSanctuaryRequestDto, SanctuariesListResponseDto, SanctuaryResponseDto, UpdateSanctuaryRequestDto } from "./dtos";
 import { SANCTUARY_ADMIN_ROUTES, SANCTUARY_ROUTES } from "./routes";
+import { UserSummaryDto } from "../user";
 
 export const SanctuaryAdminContract = {
     getAll: {
@@ -42,6 +43,30 @@ export const SanctuaryAdminContract = {
         build: () => `${SANCTUARY_ADMIN_ROUTES.ROOT}/${SANCTUARY_ADMIN_ROUTES.SEARCH}`,
         request: {} as QueryOptions<SanctuaryResponseDto>,
         response: {} as PaginatedResponse<SanctuaryResponseDto>,
+    },
+    addContributor: {
+        method: 'POST' as const,
+        route: SANCTUARY_ADMIN_ROUTES.ADD_CONTRIBUTOR,
+        params: {} as { id: string },
+        build: (p: { id: string }) => `${SANCTUARY_ADMIN_ROUTES.ROOT}/${encodeURIComponent(p.id)}/contributors`,
+        request: {} as { userId: string },
+        response: {} as SanctuaryResponseDto,
+    },
+    removeContributor: {
+        method: 'DELETE' as const,
+        route: SANCTUARY_ADMIN_ROUTES.REMOVE_CONTRIBUTOR,
+        params: {} as { id: string },
+        build: (p: { id: string }) => `${SANCTUARY_ADMIN_ROUTES.ROOT}/${encodeURIComponent(p.id)}/contributors`,
+        request: {} as { userId: string },
+        response: {} as SanctuaryResponseDto,
+    },
+    searchContributors: {
+        method: 'POST' as const,
+        route: SANCTUARY_ADMIN_ROUTES.SEARCH_CONTRIBUTORS,
+        params: {} as { id: string },
+        build: (p: { id: string }) => `${SANCTUARY_ADMIN_ROUTES.ROOT}/${encodeURIComponent(p.id)}/contributors/search`,
+        request: {} as QueryOptions<UserSummaryDto>,
+        response: {} as PaginatedResponse<UserSummaryDto>,
     }
 } as const;
 

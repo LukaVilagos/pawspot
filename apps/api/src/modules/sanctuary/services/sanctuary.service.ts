@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { CreateSanctuaryRequestDto, PaginatedResponse, QueryOptionsDto, SanctuariesListResponseDto, SanctuaryResponseDto, SignedUserDto, UpdateSanctuaryRequestDto } from '@pawspot/api-contracts';
+import { CreateSanctuaryRequestDto, PaginatedResponse, QueryOptionsDto, SanctuariesListResponseDto, SanctuaryResponseDto, SignedUserDto, UpdateSanctuaryRequestDto, UserSummaryDto } from '@pawspot/api-contracts';
 import { PawSpotLogger } from 'src/common/logger/logger';
 import { AuditService } from 'src/modules/audit/services/audit.service';
 import { PrismaService } from 'src/modules/prisma/services/prisma.service';
@@ -160,5 +160,48 @@ export class SanctuaryService {
                 }
             }
         });
+    }
+
+    async addContributor(sanctuaryId: string, userId: string): Promise<SanctuaryResponseDto> {
+        this.logger.log(`Adding contributor ${userId} to sanctuary: ${sanctuaryId}`);
+        const sanctuary = await this.prisma.client.sanctuary.update({
+            where: { id: sanctuaryId },
+            data: {
+                contributors: {
+                    connect: { id: userId }
+                }
+            },
+            omit: SANCTUARY_OMIT_FIELDS,
+            include: SANCTUARY_INCLUDE_FIELDS,
+        });
+        return transformSanctuaryResponse(sanctuary);
+    }
+
+    async removeContributor(sanctuaryId: string, userId: string): Promise<SanctuaryResponseDto> {
+        this.logger.log(`Removing contributor ${userId} from sanctuary: ${sanctuaryId}`);
+        const sanctuary = await this.prisma.client.sanctuary.update({
+            where: { id: sanctuaryId },
+            data: {
+                contributors: {
+                    disconnect: { id: userId }
+                }
+            },
+            omit: SANCTUARY_OMIT_FIELDS,
+            include: SANCTUARY_INCLUDE_FIELDS,
+        });
+        return transformSanctuaryResponse(sanctuary);
+    }
+
+    async searchContributors(sanctuaryId: string, query: QueryOptionsDto<UserSummaryDto>): Promise<PaginatedResponse<UserSummaryDto>> {
+        this.logger.log(`Searching contributors for sanctuary ${sanctuaryId}`);
+        const result = await this.searchService.search<any>('user', query, {
+            select: { id: true, email: true, name: true },
+            where: {
+                followedSanctuaries: {
+                    some: { id: sanctuaryId }
+                }
+            }
+        });
+        return result;
     }
 }

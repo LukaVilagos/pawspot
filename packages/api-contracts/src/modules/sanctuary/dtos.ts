@@ -17,6 +17,10 @@ export const UpdateSanctuaryRequestSchema = z.strictObject({
   contributors: z.array(z.string()).optional(),
 });
 
+export const ContributorRequestSchema = z.strictObject({
+  userId: z.string().min(1, 'User ID is required'),
+});
+
 export const SanctuaryAnimalSummarySchema = z.strictObject({
   id: z.string(),
   name: z.string(),
@@ -68,7 +72,11 @@ export type UpdateSanctuaryRequest = z.infer<
   typeof UpdateSanctuaryRequestSchema
 >;
 export type PaginatedSanctuaryResponse = z.infer<typeof PaginatedSanctuaryResponseSchema>;
+export type ContributorRequest = z.infer<typeof ContributorRequestSchema>;
 
+export class ContributorRequestDto extends createZodDto(
+  ContributorRequestSchema
+) { }
 export class SanctuaryResponseDto extends createZodDto(
   SanctuaryResponseSchema
 ) { }

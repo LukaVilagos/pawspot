@@ -23,6 +23,8 @@ interface ModelClient {
 interface SearchOptions {
     omit?: Record<string, boolean>;
     include?: Record<string, boolean | object>;
+    select?: Record<string, boolean>;
+    where?: Record<string, unknown>;
 }
 
 @Injectable()
@@ -37,7 +39,8 @@ export class PrismaQueryBuilderService {
         const { sort = [], filter = [], page = 1, limit = 10 } = query;
 
         const modelClient = this.getModelClient(model);
-        const where = this.buildWhereFromFilters(filter as FilterEntry<unknown>[]);
+        const filterWhere = this.buildWhereFromFilters(filter as FilterEntry<unknown>[]);
+        const where = options?.where ? { ...filterWhere, ...options.where } : filterWhere;
         const orderBy = this.buildOrderBy(sort);
 
         const total = await modelClient.count({ where });
@@ -54,6 +57,9 @@ export class PrismaQueryBuilderService {
         }
         if (options?.include) {
             findArgs.include = options.include;
+        }
+        if (options?.select) {
+            findArgs.select = options.select;
         }
 
         const items = (await modelClient.findMany(findArgs)) as T[];
