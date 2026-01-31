@@ -11,11 +11,12 @@ const SANCTUARY_INCLUDE_FIELDS = {
     contributors: { select: { id: true, email: true, name: true } },
     animals: { select: { id: true, name: true, species: true } },
     Post: { select: { id: true, title: true } },
+    qrCode: { select: { id: true, targetUrl: true, imageUrl: true } },
 } as const;
 
 const transformSanctuaryResponse = (sanctuary: any): any => {
-    const { Post, ...rest } = sanctuary;
-    return { ...rest, posts: Post };
+    const { Post, qrCode, ...rest } = sanctuary;
+    return { ...rest, posts: Post, qrCode: qrCode || null };
 };
 
 @Injectable()
@@ -203,5 +204,31 @@ export class SanctuaryService {
             }
         });
         return result;
+    }
+
+    async generateQrCode(sanctuaryId: string, baseUrl: string): Promise<SanctuaryResponseDto> {
+        this.logger.log(`Generating QR code for sanctuary: ${sanctuaryId}`);
+
+        const existingSanctuary = await this.prisma.client.sanctuary.findUniqueOrThrow({
+            where: { id: sanctuaryId },
+            include: { qrCode: true },
+        });
+
+        if (existingSanctuary.qrCode) {
+            throw new Error('QR code already exists for this sanctuary');
+        }
+
+        const targetUrl = `${baseUrl}/sanctuary/${sanctuaryId}`;
+        const imageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(targetUrl)}`;
+
+        await this.prisma.client.qrCode.create({
+            data: {
+                targetUrl,
+                imageUrl,
+                sanctuary: { connect: { id: sanctuaryId } },
+            },
+        });
+
+        return this.findById(sanctuaryId);
     }
 }

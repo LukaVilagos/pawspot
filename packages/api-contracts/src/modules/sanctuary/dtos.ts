@@ -32,6 +32,12 @@ export const SanctuaryPostSummarySchema = z.strictObject({
   title: z.string(),
 });
 
+export const SanctuaryQrCodeSchema = z.strictObject({
+  id: z.string(),
+  targetUrl: z.string(),
+  imageUrl: z.string(),
+});
+
 export const SanctuaryResponseSchema = z.strictObject({
   id: z.string(),
   createdAt: z.coerce.date(),
@@ -48,6 +54,9 @@ export const SanctuaryResponseSchema = z.strictObject({
   },
   get posts(): z.ZodArray<typeof SanctuaryPostSummarySchema> {
     return z.array(SanctuaryPostSummarySchema);
+  },
+  get qrCode(): z.ZodNullable<typeof SanctuaryQrCodeSchema> {
+    return z.nullable(SanctuaryQrCodeSchema);
   }
 });
 

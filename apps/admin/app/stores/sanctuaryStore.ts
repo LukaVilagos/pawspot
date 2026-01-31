@@ -190,6 +190,24 @@ export const useSanctuaryStore = defineStore('sanctuary', () => {
         }
     }
 
+    async function generateQrCode(sanctuaryId: string) {
+        isLoading.value = true
+        error.value = null
+        try {
+            const api = useSanctuaryApi()
+            const data = await api.generateQrCode(sanctuaryId)
+            if (data && sanctuary.value?.id === sanctuaryId) {
+                sanctuary.value = data
+            }
+            return data
+        } catch (e: any) {
+            error.value = e?.message ?? String(e)
+            throw normalizeApiError(e)
+        } finally {
+            isLoading.value = false
+        }
+    }
+
     return {
         isLoading,
         hasInitiallyLoaded,
@@ -209,5 +227,6 @@ export const useSanctuaryStore = defineStore('sanctuary', () => {
         addContributor,
         removeContributor,
         searchContributors,
+        generateQrCode,
     }
 })

@@ -10,6 +10,23 @@
                 </div>
 
                 <div class="mt-8">
+                    <h3 class="text-lg font-semibold mb-4">QR Code</h3>
+                    <div v-if="sanctuary.qrCode" class="flex flex-col items-start gap-4">
+                        <img :src="sanctuary.qrCode.imageUrl" alt="Sanctuary QR Code"
+                            class="w-48 h-48 border rounded" />
+                        <p class="text-sm text-muted">
+                            Scan to visit: <a :href="sanctuary.qrCode.targetUrl" target="_blank"
+                                class="text-primary hover:underline">{{ sanctuary.qrCode.targetUrl }}</a>
+                        </p>
+                    </div>
+                    <div v-else class="flex flex-col items-start gap-4">
+                        <p class="text-sm text-muted">No QR code generated yet.</p>
+                        <UButton label="Generate QR Code" icon="i-lucide-qr-code" color="primary"
+                            :loading="isGeneratingQr" @click="handleGenerateQrCode" />
+                    </div>
+                </div>
+
+                <div class="mt-8">
                     <h3 class="text-lg font-semibold mb-4">Animals</h3>
                     <TablesAnimalTable :sanctuary-id="sanctuary.id" :show-header="false" />
                 </div>
@@ -43,11 +60,21 @@ const { entityId, navigateToEdit, navigateAfterDelete } = useCrudPage({
 await sanctuaryStore.fetchSanctuaryById(entityId.value)
 
 const showDelete = ref(false)
+const isGeneratingQr = ref(false)
 
 const onEdit = () => navigateToEdit()
 const onDelete = async () => {
     await sanctuaryStore.deleteSanctuary(entityId.value)
     navigateAfterDelete()
+}
+
+const handleGenerateQrCode = async () => {
+    isGeneratingQr.value = true
+    try {
+        await sanctuaryStore.generateQrCode(entityId.value)
+    } finally {
+        isGeneratingQr.value = false
+    }
 }
 
 const headerLinks = ref<ButtonProps[]>([

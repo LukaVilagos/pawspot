@@ -1,4 +1,5 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { ContributorRequestDto, CreateSanctuaryRequestDto, PaginatedSanctuaryResponseDto, PaginatedUserSummaryResponseDto, QueryOptionsDto, SANCTUARY_ADMIN_ROUTES, SanctuaryResponseDto, SignedUserDto, UpdateSanctuaryRequestDto, UserSummaryDto } from '@pawspot/api-contracts';
 import { SanctuaryService } from '../services/sanctuary.service';
 import { ZodSerializerDto } from 'nestjs-zod';
@@ -9,7 +10,10 @@ import { AuthGuard } from 'src/modules/auth/guards/auth.guard';
 @Controller(SANCTUARY_ADMIN_ROUTES.ROOT)
 @UseGuards(AuthGuard, AdminGuard)
 export class SanctuaryAdminController {
-    constructor(private readonly sanctuaryService: SanctuaryService) { }
+    constructor(
+        private readonly sanctuaryService: SanctuaryService,
+        private readonly configService: ConfigService
+    ) { }
 
     @ZodSerializerDto(SanctuaryResponseDto)
     @Get(SANCTUARY_ADMIN_ROUTES.BY_ID)
@@ -57,5 +61,12 @@ export class SanctuaryAdminController {
     @Delete(SANCTUARY_ADMIN_ROUTES.REMOVE_CONTRIBUTOR)
     async removeContributor(@Param('id') id: string, @Body() body: ContributorRequestDto): Promise<SanctuaryResponseDto> {
         return this.sanctuaryService.removeContributor(id, body.userId);
+    }
+
+    @ZodSerializerDto(SanctuaryResponseDto)
+    @Post(SANCTUARY_ADMIN_ROUTES.GENERATE_QR_CODE)
+    async generateQrCode(@Param('id') id: string): Promise<SanctuaryResponseDto> {
+        const webBaseUrl = this.configService.get<string>('WEB_BASE_URL') || 'http://localhost:3002';
+        return this.sanctuaryService.generateQrCode(id, webBaseUrl);
     }
 }

@@ -8,6 +8,7 @@ export const SANCTUARY_ADMIN_ROUTES = {
     ADD_CONTRIBUTOR: ':id/contributors',
     REMOVE_CONTRIBUTOR: ':id/contributors',
     SEARCH_CONTRIBUTORS: ':id/contributors/search',
+    GENERATE_QR_CODE: ':id/qr-code',
 } as const;
 
 export const SANCTUARY_ROUTES = {

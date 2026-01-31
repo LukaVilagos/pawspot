@@ -67,6 +67,13 @@ export const SanctuaryAdminContract = {
         build: (p: { id: string }) => `${SANCTUARY_ADMIN_ROUTES.ROOT}/${encodeURIComponent(p.id)}/contributors/search`,
         request: {} as QueryOptions<UserSummaryDto>,
         response: {} as PaginatedResponse<UserSummaryDto>,
+    },
+    generateQrCode: {
+        method: 'POST' as const,
+        route: SANCTUARY_ADMIN_ROUTES.GENERATE_QR_CODE,
+        params: {} as { id: string },
+        build: (p: { id: string }) => `${SANCTUARY_ADMIN_ROUTES.ROOT}/${encodeURIComponent(p.id)}/qr-code`,
+        response: {} as SanctuaryResponseDto,
     }
 } as const;
 

@@ -72,6 +72,15 @@ export const useSanctuaryApi = () => {
         );
     };
 
+    const generateQrCode = async (sanctuaryId: string) => {
+        return await $fetch<SanctuaryResponse>(
+            `/api/sanctuary/${sanctuaryId}/qr-code`,
+            {
+                method: "POST",
+            }
+        );
+    };
+
     return {
         getSanctuaryById,
         createSanctuary,
@@ -81,5 +90,6 @@ export const useSanctuaryApi = () => {
         addContributor,
         removeContributor,
         searchContributors,
+        generateQrCode,
     };
 };
