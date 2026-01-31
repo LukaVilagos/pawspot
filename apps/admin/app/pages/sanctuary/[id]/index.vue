@@ -29,28 +29,28 @@
             <DeleteItemModal v-model="showDelete" item-name="Sanctuary" @confirm="onDelete" />
         </UPage>
     </div>
-    <div v-else class="flex items-center justify-center h-screen">
-        <UIcon name="i-heroicons-arrow-path" class="animate-spin" />
-    </div>
+    <LoadingSpinner v-else />
 </template>
 
 <script setup lang="ts">
 import type { ButtonProps } from '@nuxt/ui'
 import type { PageItem } from '~/types/PageItem'
 
-const route = useRoute()
-const router = useRouter()
 const sanctuaryStore = useSanctuaryStore()
 const { sanctuary } = storeToRefs(sanctuaryStore)
 
-await sanctuaryStore.fetchSanctuaryById(String(route.params.id))
+const { entityId, navigateToEdit, navigateAfterDelete } = useCrudPage({
+    basePath: '/sanctuary'
+})
+
+await sanctuaryStore.fetchSanctuaryById(entityId.value)
 
 const showDelete = ref(false)
 
-const onEdit = () => router.push(`/sanctuary/${route.params.id}/edit/`)
+const onEdit = () => navigateToEdit()
 const onDelete = async () => {
-    await sanctuaryStore.deleteSanctuary(String(route.params.id))
-    router.push('/sanctuary')
+    await sanctuaryStore.deleteSanctuary(entityId.value)
+    navigateAfterDelete()
 }
 
 const headerLinks = ref<ButtonProps[]>([

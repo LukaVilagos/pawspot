@@ -9,6 +9,12 @@
 <script setup lang="ts">
 import { type SanctuaryResponse, type QueryOptions } from '@pawspot/api-contracts'
 import type { TypedTableColumn } from '~/types/table-types'
+import {
+    createIdColumn,
+    createTextColumn,
+    createLinkColumn,
+    createCreatedAtColumn
+} from '~/utils/tableUtils'
 
 const props = withDefaults(defineProps<{
     showFilter?: boolean
@@ -31,70 +37,15 @@ async function loadSanctuaries(query: QueryOptions<SanctuaryResponse>): Promise<
 }
 
 const columns: TypedTableColumn<SanctuaryResponse>[] = [
-    {
-        accessorKey: 'id',
-        header: 'ID',
-        sortable: true,
-        filter: { type: 'text' },
-        meta: {
-            style: {
-                th: 'width: 15%',
-                td: 'width: 15%'
-            }
-        }
-    },
-    {
-        accessorKey: 'name',
-        header: 'Name',
-        sortable: true,
-        filter: { type: 'text' },
-        meta: {
-            style: {
-                th: 'width: 20%',
-                td: 'width: 20%'
-            }
-        }
-    },
-    {
-        accessorKey: 'location',
-        header: 'Location',
-        sortable: true,
-        filter: { type: 'text' },
-        meta: {
-            style: {
-                th: 'width: 20%',
-                td: 'width: 20%'
-            }
-        }
-    },
-    {
-        accessorKey: 'owner',
-        header: 'Owner',
-        sortable: true,
+    createIdColumn<SanctuaryResponse>('15%'),
+    createTextColumn<SanctuaryResponse>('name', 'Name', '20%'),
+    createTextColumn<SanctuaryResponse>('location', 'Location', '20%'),
+    createLinkColumn<SanctuaryResponse>('owner', 'Owner', '15%', {
+        href: (row) => row.owner ? `/user/${row.owner.id}` : '',
+        label: (row) => row.owner?.name || row.owner?.email || '-',
         sortKey: 'owner.name',
-        filter: { type: 'text', nestedKey: 'owner.name' },
-        link: {
-            href: (row) => row.owner ? `/user/${row.owner.id}` : '',
-            label: (row) => row.owner?.name || row.owner?.email || '-'
-        },
-        meta: {
-            style: {
-                th: 'width: 15%',
-                td: 'width: 15%'
-            }
-        }
-    },
-    {
-        accessorKey: 'createdAt',
-        header: 'Created At',
-        sortable: true,
-        filter: { type: 'range' },
-        meta: {
-            style: {
-                th: 'width: 20%',
-                td: 'width: 20%'
-            }
-        }
-    }
+        nestedFilterKey: 'owner.name'
+    }),
+    createCreatedAtColumn<SanctuaryResponse>('20%')
 ]
 </script>

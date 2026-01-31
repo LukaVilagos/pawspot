@@ -6,6 +6,7 @@
 
 <script setup lang="ts">
 import type { DropdownMenuItem } from '@nuxt/ui'
+import { appendReturnUrl } from '~/utils/urlParams'
 
 const props = defineProps<{
     basePath: string,
@@ -15,24 +16,16 @@ const props = defineProps<{
     returnUrl?: string
 }>();
 
-const buildUrl = (path: string) => {
-    if (props.returnUrl) {
-        const separator = path.includes('?') ? '&' : '?'
-        return `${path}${separator}returnUrl=${encodeURIComponent(props.returnUrl)}`
-    }
-    return path
-}
-
 const items = ref<DropdownMenuItem[][]>([
     [
         {
             label: 'View',
-            to: buildUrl(`${props.basePath}/${props.id}`),
+            to: appendReturnUrl(`${props.basePath}/${props.id}`, props.returnUrl),
             icon: 'mdi-eye',
         },
         {
             label: 'Edit',
-            to: buildUrl(`${props.basePath}/${props.id}/edit`),
+            to: appendReturnUrl(`${props.basePath}/${props.id}/edit`, props.returnUrl),
             icon: 'mdi-pencil',
         },
         {

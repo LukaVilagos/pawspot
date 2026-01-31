@@ -1,24 +1,26 @@
 <template>
     <Edit v-if="post" :item="postWithIds" :fields="items" :schema="EditPostSchema" :saveFn="savePost"
         redirect-to="/post" entity-name="Post" />
-    <div v-else class="flex items-center justify-center h-screen">
-        <UIcon name="i-heroicons-arrow-path" class="animate-spin" />
-    </div>
+    <LoadingSpinner v-else />
 </template>
 
 <script setup lang="ts">
 import type { PostResponse } from '@pawspot/api-contracts'
 import type { PageItem } from '~/types/PageItem'
 import { EditPostSchema } from '~/utils/validation/postSchemas'
+import { userToOptions, sanctuaryToOptions } from '~/utils/options'
 
-const route = useRoute()
 const postStore = usePostStore()
 const sanctuaryStore = useSanctuaryStore()
 const userStore = useUserStore()
 const { post } = storeToRefs(postStore)
 
+const { entityId } = useCrudPage({
+    basePath: '/post'
+})
+
 await Promise.all([
-    postStore.fetchPostById(String(route.params.id)),
+    postStore.fetchPostById(entityId.value),
     userStore.fetchUsers(),
     sanctuaryStore.fetchSanctuaries()
 ])
@@ -26,13 +28,8 @@ await Promise.all([
 const { users } = storeToRefs(userStore)
 const { sanctuaries } = storeToRefs(sanctuaryStore)
 
-const userOptions = computed(() =>
-    users.value.map(u => ({ label: u.name || u.email, value: u.id }))
-)
-
-const sanctuaryOptions = computed(() =>
-    sanctuaries.value.map(s => ({ label: s.name, value: s.id }))
-)
+const userOptions = computed(() => userToOptions(users.value))
+const sanctuaryOptions = computed(() => sanctuaryToOptions(sanctuaries.value))
 
 const postWithIds = computed(() => {
     if (!post.value) return null

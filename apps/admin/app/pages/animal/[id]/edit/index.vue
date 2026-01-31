@@ -1,31 +1,31 @@
 <template>
     <Edit v-if="animal" :item="animalWithSanctuaryId" :fields="items" :schema="EditAnimalSchema" :saveFn="saveAnimal"
         redirect-to="/animal" entity-name="Animal" />
-    <div v-else class="flex items-center justify-center h-screen">
-        <UIcon name="i-heroicons-arrow-path" class="animate-spin" />
-    </div>
+    <LoadingSpinner v-else />
 </template>
 
 <script setup lang="ts">
 import type { AnimalResponse } from '@pawspot/api-contracts'
 import type { PageItem } from '~/types/PageItem'
 import { EditAnimalSchema } from '~/utils/validation/animalSchemas'
+import { sanctuaryToOptions } from '~/utils/options'
 
-const route = useRoute()
 const animalStore = useAnimalStore()
 const sanctuaryStore = useSanctuaryStore()
 const { animal } = storeToRefs(animalStore)
 
+const { entityId } = useCrudPage({
+    basePath: '/animal'
+})
+
 await Promise.all([
-    animalStore.fetchAnimalById(String(route.params.id)),
+    animalStore.fetchAnimalById(entityId.value),
     sanctuaryStore.fetchSanctuaries()
 ])
 
 const { sanctuaries } = storeToRefs(sanctuaryStore)
 
-const sanctuaryOptions = computed(() =>
-    sanctuaries.value.map(s => ({ label: s.name, value: s.id }))
-)
+const sanctuaryOptions = computed(() => sanctuaryToOptions(sanctuaries.value))
 
 const animalWithSanctuaryId = computed(() => {
     if (!animal.value) return null

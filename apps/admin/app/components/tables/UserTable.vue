@@ -10,6 +10,11 @@
 import { type UserResponse, type QueryOptions, UserTypeSchema } from '@pawspot/api-contracts'
 import type { TypedTableColumn } from '~/types/table-types'
 import { schemaToOptions } from '~/utils/options'
+import {
+    createIdColumn,
+    createTextColumn,
+    createCreatedAtColumn
+} from '~/utils/tableUtils'
 
 const props = withDefaults(defineProps<{
     showFilter?: boolean
@@ -32,42 +37,9 @@ async function loadUsers(query: QueryOptions<UserResponse>): Promise<void> {
 }
 
 const columns: TypedTableColumn<UserResponse>[] = [
-    {
-        accessorKey: 'id',
-        header: 'ID',
-        sortable: true,
-        filter: { type: 'text' },
-        meta: {
-            style: {
-                th: 'width: 15%',
-                td: 'width: 15%'
-            }
-        }
-    },
-    {
-        accessorKey: 'email',
-        header: 'Email',
-        sortable: true,
-        filter: { type: 'text' },
-        meta: {
-            style: {
-                th: 'width: 35%',
-                td: 'width: 35%'
-            }
-        }
-    },
-    {
-        accessorKey: 'name',
-        header: 'Name',
-        sortable: true,
-        filter: { type: 'text' },
-        meta: {
-            style: {
-                th: 'width: 10%',
-                td: 'width: 10%'
-            }
-        }
-    },
+    createIdColumn<UserResponse>('15%'),
+    createTextColumn<UserResponse>('email', 'Email', '35%'),
+    createTextColumn<UserResponse>('name', 'Name', '10%'),
     {
         accessorKey: 'type',
         header: 'Type',
@@ -80,17 +52,6 @@ const columns: TypedTableColumn<UserResponse>[] = [
             }
         }
     },
-    {
-        accessorKey: 'createdAt',
-        header: 'Created At',
-        sortable: true,
-        filter: { type: 'range' },
-        meta: {
-            style: {
-                th: 'width: 20%',
-                td: 'width: 20%'
-            }
-        }
-    }
+    createCreatedAtColumn<UserResponse>('20%')
 ]
 </script>

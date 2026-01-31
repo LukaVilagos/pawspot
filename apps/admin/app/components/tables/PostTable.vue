@@ -10,6 +10,16 @@
 <script setup lang="ts">
 import { type PostResponse, type QueryOptions } from '@pawspot/api-contracts'
 import type { TypedTableColumn } from '~/types/table-types'
+import {
+    createIdColumn,
+    createTextColumn,
+    createLinkColumn,
+    createCreatedAtColumn,
+    computeReturnUrl,
+    computeCreateQueryParams,
+    addParentFilter,
+    type ParentEntityConfig
+} from '~/utils/tableUtils'
 
 const props = withDefaults(defineProps<{
     showFilter?: boolean
@@ -24,11 +34,14 @@ const props = withDefaults(defineProps<{
     returnUrl: '',
 })
 
-const computedReturnUrl = computed(() => {
-    if (props.returnUrl) return props.returnUrl
-    if (props.sanctuaryId) return `/sanctuary/${props.sanctuaryId}`
-    return ''
-})
+const parentConfig = computed<ParentEntityConfig>(() => ({
+    parentId: props.sanctuaryId,
+    parentPath: '/sanctuary',
+    filterKey: 'sanctuaryId'
+}))
+
+const computedReturnUrl = computed(() => computeReturnUrl(parentConfig.value, props.returnUrl))
+const createQueryParams = computed(() => computeCreateQueryParams(parentConfig.value))
 
 const postStore = usePostStore()
 const { searchResult, isLoading } = storeToRefs(postStore)
@@ -36,93 +49,27 @@ const { searchResult, isLoading } = storeToRefs(postStore)
 const tableKey = computed(() => generateTableKey(searchResult.value))
 const URLBase = '/post'
 
-const createQueryParams = computed(() => {
-    const params: Record<string, string> = {}
-    if (props.sanctuaryId) {
-        params.sanctuaryId = props.sanctuaryId
-    }
-    return params
-})
-
 async function loadPosts(query: QueryOptions<PostResponse>): Promise<void> {
-    if (props.sanctuaryId) {
-        query.filter = query.filter || []
-        query.filter.push(['sanctuaryId', { op: 'eq', value: props.sanctuaryId }])
-    }
+    addParentFilter(query, parentConfig.value)
     await postStore.searchPosts(query)
 }
 
 const baseColumns: TypedTableColumn<PostResponse>[] = [
-    {
-        accessorKey: 'id',
-        header: 'ID',
-        sortable: true,
-        filter: { type: 'text' },
-        meta: {
-            style: {
-                th: 'width: 15%',
-                td: 'width: 15%'
-            }
-        }
-    },
-    {
-        accessorKey: 'title',
-        header: 'Title',
-        sortable: true,
-        filter: { type: 'text' },
-        meta: {
-            style: {
-                th: 'width: 25%',
-                td: 'width: 25%'
-            }
-        }
-    },
-    {
-        accessorKey: 'user',
-        header: 'Author',
-        sortable: true,
+    createIdColumn<PostResponse>('15%'),
+    createTextColumn<PostResponse>('title', 'Title', '25%'),
+    createLinkColumn<PostResponse>('user', 'Author', '15%', {
+        href: (row) => row.user ? `/user/${row.user.id}` : '',
+        label: (row) => row.user?.name || row.user?.email || '-',
         sortKey: 'user.name',
-        filter: { type: 'text', nestedKey: 'user.name' },
-        link: {
-            href: (row) => row.user ? `/user/${row.user.id}` : '',
-            label: (row) => row.user?.name || row.user?.email || '-'
-        },
-        meta: {
-            style: {
-                th: 'width: 15%',
-                td: 'width: 15%'
-            }
-        }
-    },
-    {
-        accessorKey: 'sanctuary',
-        header: 'Sanctuary',
-        sortable: true,
+        nestedFilterKey: 'user.name'
+    }),
+    createLinkColumn<PostResponse>('sanctuary', 'Sanctuary', '15%', {
+        href: (row) => row.sanctuary ? `/sanctuary/${row.sanctuary.id}` : '',
+        label: (row) => row.sanctuary?.name || '-',
         sortKey: 'sanctuary.name',
-        filter: { type: 'text', nestedKey: 'sanctuary.name' },
-        link: {
-            href: (row) => row.sanctuary ? `/sanctuary/${row.sanctuary.id}` : '',
-            label: (row) => row.sanctuary?.name || '-'
-        },
-        meta: {
-            style: {
-                th: 'width: 15%',
-                td: 'width: 15%'
-            }
-        }
-    },
-    {
-        accessorKey: 'createdAt',
-        header: 'Created At',
-        sortable: true,
-        filter: { type: 'range' },
-        meta: {
-            style: {
-                th: 'width: 20%',
-                td: 'width: 20%'
-            }
-        }
-    }
+        nestedFilterKey: 'sanctuary.name'
+    }),
+    createCreatedAtColumn<PostResponse>('20%')
 ]
 
 const columns = computed(() => {

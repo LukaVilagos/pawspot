@@ -1,25 +1,25 @@
 <template>
     <View v-if="user" :item="user" :fields="fields" entity-name="User" :on-edit="onEdit" :on-delete="onDelete" />
-    <div v-else class="flex items-center justify-center h-screen">
-        <UIcon name="i-heroicons-arrow-path" class="animate-spin" />
-    </div>
+    <LoadingSpinner v-else />
 </template>
 
 <script setup lang="ts">
 import type { UserResponse } from '@pawspot/api-contracts'
 import type { PageItem } from '~/types/PageItem'
 
-const route = useRoute()
-const router = useRouter()
 const userStore = useUserStore()
 const { user } = storeToRefs(userStore)
 
-await userStore.fetchUserById(String(route.params.id))
+const { entityId, navigateToEdit, navigateAfterDelete } = useCrudPage({
+    basePath: '/user'
+})
 
-const onEdit = () => router.push(`/user/${route.params.id}/edit/`)
+await userStore.fetchUserById(entityId.value)
+
+const onEdit = () => navigateToEdit()
 const onDelete = async () => {
-    await userStore.deleteUser(String(route.params.id))
-    router.push('/user')
+    await userStore.deleteUser(entityId.value)
+    navigateAfterDelete()
 }
 
 const fields: PageItem<UserResponse>[] = [

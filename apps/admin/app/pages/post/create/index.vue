@@ -7,12 +7,11 @@
 import type { CreatePostRequest } from '@pawspot/api-contracts'
 import type { PageItem } from '~/types/PageItem'
 import { CreatePostSchema } from '~/utils/validation/postSchemas';
+import { userToOptions, sanctuaryToOptions } from '~/utils/options'
 
 const postStore = usePostStore()
 const sanctuaryStore = useSanctuaryStore()
 const userStore = useUserStore()
-const router = useRouter()
-const route = useRoute()
 
 await Promise.all([
     userStore.fetchUsers(),
@@ -22,9 +21,10 @@ await Promise.all([
 const { users } = storeToRefs(userStore)
 const { sanctuaries } = storeToRefs(sanctuaryStore)
 
-const prefilledSanctuaryId = computed(() => {
-    const sanctuaryId = route.query.sanctuaryId
-    return typeof sanctuaryId === 'string' ? sanctuaryId : undefined
+const { prefilledId: prefilledSanctuaryId, navigateAfterCreate, navigateOnCancel } = useCrudPage({
+    basePath: '/post',
+    prefilledIdKey: 'sanctuaryId',
+    prefilledParentPath: '/sanctuary'
 })
 
 const initialValues = computed(() => {
@@ -35,38 +35,16 @@ const initialValues = computed(() => {
     return values
 })
 
-const returnUrl = computed(() => {
-    const url = route.query.returnUrl
-    return typeof url === 'string' ? url : undefined
-})
-
-const userOptions = computed(() =>
-    users.value.map(u => ({ label: u.name || u.email, value: u.id }))
-)
-
-const sanctuaryOptions = computed(() =>
-    sanctuaries.value.map(s => ({ label: s.name, value: s.id }))
-)
+const userOptions = computed(() => userToOptions(users.value))
+const sanctuaryOptions = computed(() => sanctuaryToOptions(sanctuaries.value))
 
 const onCreated = async (values: CreatePostRequest, passedReturnUrl?: string) => {
     const createdItem = await postStore.createPost(values)
-    const redirectTarget = passedReturnUrl || returnUrl.value
-    if (redirectTarget) {
-        router.push(redirectTarget)
-    } else {
-        router.push(`/post/${createdItem.id}`)
-    }
+    navigateAfterCreate(createdItem.id, passedReturnUrl)
 }
 
 const onCancel = (passedReturnUrl?: string) => {
-    const redirectTarget = passedReturnUrl || returnUrl.value
-    if (redirectTarget) {
-        router.push(redirectTarget)
-    } else if (prefilledSanctuaryId.value) {
-        router.push(`/sanctuary/${prefilledSanctuaryId.value}`)
-    } else {
-        router.push('/post')
-    }
+    navigateOnCancel(passedReturnUrl)
 }
 
 const items = computed<PageItem<CreatePostRequest>[]>(() => [

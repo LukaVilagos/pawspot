@@ -25,6 +25,7 @@
 import type z from 'zod';
 import type { PageItem } from '~/types/PageItem';
 import type { ButtonProps } from '@nuxt/ui'
+import { getReturnUrl } from '~/utils/urlParams'
 
 const route = useRoute()
 
@@ -45,10 +46,7 @@ const props = withDefaults(defineProps<{
     description: 'Create a new item'
 })
 
-const returnUrl = computed(() => {
-    const url = route.query.returnUrl
-    return typeof url === 'string' ? url : undefined
-})
+const returnUrl = computed(() => getReturnUrl(route))
 
 const headline = computed(() => props.headline)
 const title = computed(() => props.title ?? props.entityName)

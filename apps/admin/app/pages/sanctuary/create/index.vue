@@ -7,6 +7,7 @@
 import type { CreateSanctuaryRequest } from '@pawspot/api-contracts'
 import type { PageItem } from '~/types/PageItem'
 import { CreateSanctuarySchema } from '~/utils/validation/sanctuarySchemas';
+import { userToOptions } from '~/utils/options'
 
 const sanctuaryStore = useSanctuaryStore()
 const userStore = useUserStore()
@@ -15,9 +16,7 @@ const router = useRouter()
 await userStore.fetchUsers()
 const { users } = storeToRefs(userStore)
 
-const userOptions = computed(() =>
-    users.value.map(u => ({ label: u.name || u.email, value: u.id }))
-)
+const userOptions = computed(() => userToOptions(users.value))
 
 const onCreated = async (values: CreateSanctuaryRequest) => {
     const createdItem = await sanctuaryStore.createSanctuary(values)

@@ -1,41 +1,25 @@
 <template>
     <View v-if="animal" :item="displayItem" :fields="fields" entity-name="Animal" :on-edit="onEdit"
         :on-delete="onDelete" />
-    <div v-else class="flex items-center justify-center h-screen">
-        <UIcon name="i-heroicons-arrow-path" class="animate-spin" />
-    </div>
+    <LoadingSpinner v-else />
 </template>
 
 <script setup lang="ts">
 import type { PageItem } from '~/types/PageItem'
 
-const route = useRoute()
-const router = useRouter()
 const animalStore = useAnimalStore()
 const { animal } = storeToRefs(animalStore)
 
-await animalStore.fetchAnimalById(String(route.params.id))
-
-const returnUrl = computed(() => {
-    const url = route.query.returnUrl
-    return typeof url === 'string' ? url : undefined
+const { entityId, navigateToEdit, navigateAfterDelete } = useCrudPage({
+    basePath: '/animal'
 })
 
-const onEdit = () => {
-    const editPath = `/animal/${route.params.id}/edit/`
-    if (returnUrl.value) {
-        router.push(`${editPath}?returnUrl=${encodeURIComponent(returnUrl.value)}`)
-    } else {
-        router.push(editPath)
-    }
-}
+await animalStore.fetchAnimalById(entityId.value)
+
+const onEdit = () => navigateToEdit()
 const onDelete = async () => {
-    await animalStore.deleteAnimal(String(route.params.id))
-    if (returnUrl.value) {
-        router.push(returnUrl.value)
-    } else {
-        router.push('/animal')
-    }
+    await animalStore.deleteAnimal(entityId.value)
+    navigateAfterDelete()
 }
 
 const displayItem = computed(() => ({

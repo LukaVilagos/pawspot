@@ -1,31 +1,31 @@
 <template>
     <Edit v-if="sanctuary" :item="sanctuaryWithOwnerId" :fields="items" :schema="EditSanctuarySchema"
         :saveFn="saveSanctuary" redirect-to="/sanctuary" entity-name="Sanctuary" />
-    <div v-else class="flex items-center justify-center h-screen">
-        <UIcon name="i-heroicons-arrow-path" class="animate-spin" />
-    </div>
+    <LoadingSpinner v-else />
 </template>
 
 <script setup lang="ts">
 import type { SanctuaryResponse } from '@pawspot/api-contracts'
 import type { PageItem } from '~/types/PageItem'
 import { EditSanctuarySchema } from '~/utils/validation/sanctuarySchemas'
+import { userToOptions } from '~/utils/options'
 
-const route = useRoute()
 const sanctuaryStore = useSanctuaryStore()
 const userStore = useUserStore()
 const { sanctuary } = storeToRefs(sanctuaryStore)
 
+const { entityId } = useCrudPage({
+    basePath: '/sanctuary'
+})
+
 await Promise.all([
-    sanctuaryStore.fetchSanctuaryById(String(route.params.id)),
+    sanctuaryStore.fetchSanctuaryById(entityId.value),
     userStore.fetchUsers()
 ])
 
 const { users } = storeToRefs(userStore)
 
-const userOptions = computed(() =>
-    users.value.map(u => ({ label: u.name || u.email, value: u.id }))
-)
+const userOptions = computed(() => userToOptions(users.value))
 
 const sanctuaryWithOwnerId = computed(() => {
     if (!sanctuary.value) return null

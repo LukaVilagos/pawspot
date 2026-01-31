@@ -25,6 +25,7 @@ import { toTypedSchema } from '@vee-validate/zod'
 import type z from 'zod';
 import type { PageItem } from '~/types/PageItem'
 import type { ButtonProps } from '@nuxt/ui'
+import { getReturnUrl } from '~/utils/urlParams'
 
 const route = useRoute()
 
@@ -54,10 +55,7 @@ const props = withDefaults(defineProps<{
 	description: 'Modify the fields below'
 })
 
-const returnUrl = computed(() => {
-	const url = route.query.returnUrl
-	return typeof url === 'string' ? url : undefined
-})
+const returnUrl = computed(() => getReturnUrl(route))
 
 const computedHeadline = computed(() => props.headline)
 const computedTitle = computed(() => props.title ?? props.entityName)

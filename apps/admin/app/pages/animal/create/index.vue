@@ -7,18 +7,18 @@
 import type { CreateAnimalRequest } from '@pawspot/api-contracts'
 import type { PageItem } from '~/types/PageItem'
 import { CreateAnimalSchema } from '~/utils/validation/animalSchemas';
+import { sanctuaryToOptions } from '~/utils/options'
 
 const animalStore = useAnimalStore()
 const sanctuaryStore = useSanctuaryStore()
-const router = useRouter()
-const route = useRoute()
 
 await sanctuaryStore.fetchSanctuaries()
 const { sanctuaries } = storeToRefs(sanctuaryStore)
 
-const prefilledSanctuaryId = computed(() => {
-    const sanctuaryId = route.query.sanctuaryId
-    return typeof sanctuaryId === 'string' ? sanctuaryId : undefined
+const { prefilledId: prefilledSanctuaryId, navigateAfterCreate, navigateOnCancel } = useCrudPage({
+    basePath: '/animal',
+    prefilledIdKey: 'sanctuaryId',
+    prefilledParentPath: '/sanctuary'
 })
 
 const initialValues = computed(() => {
@@ -29,34 +29,15 @@ const initialValues = computed(() => {
     return values
 })
 
-const returnUrl = computed(() => {
-    const url = route.query.returnUrl
-    return typeof url === 'string' ? url : undefined
-})
-
-const sanctuaryOptions = computed(() =>
-    sanctuaries.value.map(s => ({ label: s.name, value: s.id }))
-)
+const sanctuaryOptions = computed(() => sanctuaryToOptions(sanctuaries.value))
 
 const onCreated = async (values: CreateAnimalRequest, passedReturnUrl?: string) => {
     const createdItem = await animalStore.createAnimal(values)
-    const redirectTarget = passedReturnUrl || returnUrl.value
-    if (redirectTarget) {
-        router.push(redirectTarget)
-    } else {
-        router.push(`/animal/${createdItem.id}`)
-    }
+    navigateAfterCreate(createdItem.id, passedReturnUrl)
 }
 
 const onCancel = (passedReturnUrl?: string) => {
-    const redirectTarget = passedReturnUrl || returnUrl.value
-    if (redirectTarget) {
-        router.push(redirectTarget)
-    } else if (prefilledSanctuaryId.value) {
-        router.push(`/sanctuary/${prefilledSanctuaryId.value}`)
-    } else {
-        router.push('/animal')
-    }
+    navigateOnCancel(passedReturnUrl)
 }
 
 const items = computed<PageItem<CreateAnimalRequest>[]>(() => [

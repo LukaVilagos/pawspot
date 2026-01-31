@@ -1,9 +1,7 @@
 <template>
     <Edit v-if="user" :item="user" :fields="items" :schema="EditUserSchema" :saveFn="saveUser" redirect-to="/user"
         entity-name="User" />
-    <div v-else class="flex items-center justify-center h-screen">
-        <UIcon name="i-heroicons-arrow-path" class="animate-spin" />
-    </div>
+    <LoadingSpinner v-else />
 </template>
 
 <script setup lang="ts">
@@ -11,11 +9,14 @@ import { UserTypeSchema, type UserResponse } from '@pawspot/api-contracts'
 import type { PageItem } from '~/types/PageItem'
 import { EditUserSchema } from '~/utils/validation/userSchemas'
 
-const route = useRoute()
 const userStore = useUserStore()
 const { user } = storeToRefs(userStore)
 
-await userStore.fetchUserById(String(route.params.id))
+const { entityId } = useCrudPage({
+    basePath: '/user'
+})
+
+await userStore.fetchUserById(entityId.value)
 
 const saveUser = async (id: string | number | undefined, payload: Record<string, any>) => {
     if (!id) throw { message: 'Missing id' }
