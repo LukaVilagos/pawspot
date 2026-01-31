@@ -175,6 +175,7 @@ export class SanctuaryService {
             omit: SANCTUARY_OMIT_FIELDS,
             include: SANCTUARY_INCLUDE_FIELDS,
         });
+        await this.auditService.logAction(userId, `Added as contributor to sanctuary: ${sanctuaryId}`);
         return transformSanctuaryResponse(sanctuary);
     }
 
@@ -190,6 +191,7 @@ export class SanctuaryService {
             omit: SANCTUARY_OMIT_FIELDS,
             include: SANCTUARY_INCLUDE_FIELDS,
         });
+        await this.auditService.logAction(userId, `Removed as contributor from sanctuary: ${sanctuaryId}`);
         return transformSanctuaryResponse(sanctuary);
     }
 
@@ -229,6 +231,7 @@ export class SanctuaryService {
             },
         });
 
+        await this.auditService.logAction('system', `Generated QR code for sanctuary: ${sanctuaryId}`);
         return this.findById(sanctuaryId);
     }
 }
